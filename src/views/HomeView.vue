@@ -1,5 +1,5 @@
 <script setup lang="ts">
-//Test comment
+//Test comment 2
 import TheWelcome from '../components/TheWelcome.vue'
 </script>
 
