@@ -36,7 +36,7 @@ router.beforeEach(async (to, from, next) => {
         });
         // If the token is valid, proceed
         next();
-      } catch (error) {
+      } catch (error: any) {
         if (error.response && error.response.status === 401) {
           // If the token is invalid or expired, redirect to login
           next({ path: '/login' }); // Redirect to login page
