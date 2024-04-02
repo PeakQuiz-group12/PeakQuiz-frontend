@@ -1,12 +1,92 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onUnmounted, ref } from 'vue'
+import router from '@/router'
 
 const isLogin = ref(true)
 const emailUsername = ref("")
 const password = ref("")
+const registerErrUsername = ref("")
+const registerErrPassword = ref("")
+const loginErr = ref("")
+
 const loginSignup = () => {
-  console.log(isLogin.value)
+  if (isLogin.value) {
+    loginUser()
+  }
+  else {
+    registerUser()
+  }
 }
+
+const loginUser = async () => {
+  const formData = new URLSearchParams();
+  formData.append('username', emailUsername.value);
+  formData.append('password', password.value);
+
+  try {
+    const response = await fetch('http://localhost:8080/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData,
+    });
+    if (response.ok) {
+      const token = await response.json();
+      sessionStorage.setItem("isLoggedIn", "true");
+      sessionStorage.setItem("username", emailUsername.value);
+      sessionStorage.setItem("accessToken", token['accessToken']);
+      sessionStorage.setItem("refreshToken", token['refreshToken']);
+      console.log("Login successful");
+      await router.push("/")
+    } else {
+      const errorMsg = await response.text();
+      console.error("Login failed with status", response.status, "Message:", errorMsg);
+      loginErr.value = errorMsg;
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+  }
+};
+
+
+const registerUser = async () => {
+  const formData = new URLSearchParams();
+  formData.append('username', emailUsername.value);
+  formData.append('password', password.value);
+
+  try {
+    const response = await fetch('http://localhost:8080/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData,
+    });
+    if (response.ok) {
+      const token = await response.json();
+      console.log("Registration successful");
+      sessionStorage.setItem("isLoggedIn", "true");
+      sessionStorage.setItem("username", emailUsername.value);
+      sessionStorage.setItem("accessToken", token['accessToken']);
+      sessionStorage.setItem("refreshToken", token['refreshToken']);
+      await router.push("/");
+    } else {
+      const errorMsg = await response.text();
+      console.error("Registration failed with status", response.status, "Message:", errorMsg);
+      if (errorMsg.includes("already exists")) {
+        registerErrUsername.value = errorMsg;
+      }
+      if (errorMsg.includes("Password must")) {
+        registerErrUsername.value = "";
+        registerErrPassword.value = errorMsg;
+      }
+    }
+  } catch (error) {
+    console.error("Registration error:", error);
+  }
+};
+
 </script>
 
 <template>
@@ -21,6 +101,7 @@ const loginSignup = () => {
         <div class="email">
           <p>Email or Username</p>
           <input v-model="emailUsername" placeholder="Enter your email address or username">
+          <p class="error" v-if="!isLogin">{{ registerErrUsername }}</p>
         </div>
         <div class="password">
           <div class="p-and-forgot-password">
@@ -28,6 +109,8 @@ const loginSignup = () => {
             <p style="color: #0077C0">Forgot Password</p>
           </div>
           <input v-model="password" placeholder="Enter your password">
+          <p class="error" v-if="isLogin">{{ loginErr }}</p>
+          <p class="error" v-if="!isLogin">{{ registerErrPassword }}</p>
         </div>
       </div>
       <div class="login-signup-btn">
@@ -84,6 +167,10 @@ const loginSignup = () => {
   flex-direction: column;
 }
 
+.email, .password {
+  margin-bottom: 30px;
+}
+
 input {
   width: 100%;
   height: 50px;
@@ -91,7 +178,6 @@ input {
   border-radius: 5px;
   border: solid 2px black;
   box-sizing: border-box;
-  margin-bottom: 30px;
   background-color: #f0f0f0;
 }
 
@@ -119,5 +205,10 @@ input {
 
 h1:hover {
   color: #545454;
+}
+
+.error {
+  margin-top: 0;
+  color: #b00000;
 }
 </style>
