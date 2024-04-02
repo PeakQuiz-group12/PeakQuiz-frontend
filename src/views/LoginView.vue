@@ -134,6 +134,7 @@ const registerUser = async () => {
 
 <style scoped>
 .login-main {
+  height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;
@@ -149,13 +150,27 @@ const registerUser = async () => {
 }
 
 .content {
-  width: 50%; /* Occupy the remaining half of the container */
-  max-width: 600px; /* Max width for the content */
+  width: 50%;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Vertically center the flex items */
-  margin: auto; /* Center the content block horizontally within its container */
-  padding: 100px 20px; /* Adjusted from margin to padding for spacing inside the container */
+  justify-content: center;
+  margin: auto;
+  padding: 20px;
+}
+
+@media (max-width: 767px) {
+  .image-container {
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+  }
+
+  .content {
+    width: 80%;
+    background-color: white;
+    border-radius: 5px;
+  }
 }
 
 .login-details p {
