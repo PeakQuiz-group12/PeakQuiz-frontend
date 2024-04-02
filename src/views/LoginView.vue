@@ -3,13 +3,20 @@ import { onUnmounted, ref } from 'vue'
 import router from '@/router'
 
 const isLogin = ref(true)
-const emailUsername = ref("")
+const username = ref("")
+const email = ref("")
 const password = ref("")
 const registerErrUsername = ref("")
+const registerErrEmail = ref("")
 const registerErrPassword = ref("")
 const loginErr = ref("")
 
 const loginSignup = () => {
+  registerErrUsername.value = ""
+  registerErrEmail.value = ""
+  registerErrPassword.value = ""
+  loginErr.value = ""
+
   if (isLogin.value) {
     loginUser()
   }
@@ -20,7 +27,7 @@ const loginSignup = () => {
 
 const loginUser = async () => {
   const formData = new URLSearchParams();
-  formData.append('username', emailUsername.value);
+  formData.append('username', username.value);
   formData.append('password', password.value);
 
   try {
@@ -33,8 +40,6 @@ const loginUser = async () => {
     });
     if (response.ok) {
       const token = await response.json();
-      sessionStorage.setItem("isLoggedIn", "true");
-      sessionStorage.setItem("username", emailUsername.value);
       sessionStorage.setItem("accessToken", token['accessToken']);
       sessionStorage.setItem("refreshToken", token['refreshToken']);
       console.log("Login successful");
@@ -52,7 +57,8 @@ const loginUser = async () => {
 
 const registerUser = async () => {
   const formData = new URLSearchParams();
-  formData.append('username', emailUsername.value);
+  formData.append('username', username.value);
+  formData.append('email', email.value);
   formData.append('password', password.value);
 
   try {
@@ -66,8 +72,6 @@ const registerUser = async () => {
     if (response.ok) {
       const token = await response.json();
       console.log("Registration successful");
-      sessionStorage.setItem("isLoggedIn", "true");
-      sessionStorage.setItem("username", emailUsername.value);
       sessionStorage.setItem("accessToken", token['accessToken']);
       sessionStorage.setItem("refreshToken", token['refreshToken']);
       await router.push("/");
@@ -77,8 +81,10 @@ const registerUser = async () => {
       if (errorMsg.includes("already exists")) {
         registerErrUsername.value = errorMsg;
       }
-      if (errorMsg.includes("Password must")) {
-        registerErrUsername.value = "";
+      else if (errorMsg.includes("already in use") || errorMsg.includes("email format")) {
+        registerErrEmail.value = errorMsg
+      }
+      else if (errorMsg.includes("Password must")) {
         registerErrPassword.value = errorMsg;
       }
     }
@@ -98,10 +104,15 @@ const registerUser = async () => {
         <h1 :class="{ active: !isLogin }" @click="isLogin=false">Sign Up</h1>
       </div>
       <div class="login-details">
-        <div class="email">
-          <p>Email or Username</p>
-          <input v-model="emailUsername" placeholder="Enter your email address or username">
+        <div class="username">
+          <p>Username</p>
+          <input v-model="username" placeholder="Enter your username">
           <p class="error" v-if="!isLogin">{{ registerErrUsername }}</p>
+        </div>
+        <div v-if="!isLogin" class="email">
+          <p>Email</p>
+          <input v-model="email" placeholder="Enter your email address">
+          <p class="error">{{ registerErrEmail }}</p>
         </div>
         <div class="password">
           <div class="p-and-forgot-password">
@@ -167,7 +178,7 @@ const registerUser = async () => {
   flex-direction: column;
 }
 
-.email, .password {
+.username, .password, .email {
   margin-bottom: 30px;
 }
 
