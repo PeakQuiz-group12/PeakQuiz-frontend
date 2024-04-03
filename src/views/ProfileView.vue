@@ -7,11 +7,11 @@
       :rating="rating"
       :quizzes="quizzes"
   />
-  <CompletedQuizes
+  <ProfilePageQuizzes
       :title="CompletedQuizList.title"
       :is-completed="CompletedQuizList.isCompleted"/>
   <ProfileRating/>
-  <CompletedQuizes
+  <ProfilePageQuizzes
       :title="MyQuizList.title"
       :is-completed="MyQuizList.isCompleted"/>
 </template>
