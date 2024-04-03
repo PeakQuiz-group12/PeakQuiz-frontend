@@ -1,8 +1,15 @@
 <script setup>
 import { ref } from 'vue';
 import SearchIcon from '@/components/iconComponents/searchIcon.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter();
 
 const searchQuery = ref("");
+
+const navigateToHome = () => {
+  router.push('/');
+};
 
 const search = () => {
   console.log(searchQuery.value)
@@ -11,7 +18,7 @@ const search = () => {
 
 <template>
   <header class="header">
-    <div class="logo">PeakQuiz</div>
+    <div class="logo" @click="navigateToHome">PeakQuiz</div>
     <div class="search-bar">
       <input class="search-input" type="search" placeholder="Search..." v-model="searchQuery">
       <button class="search-btn" @click="search">
@@ -40,6 +47,7 @@ const search = () => {
   font-size: 40px;
   font-weight: bold;
   margin-right: 20px;
+  cursor: pointer;
 }
 
 @media (max-width: 767px) {

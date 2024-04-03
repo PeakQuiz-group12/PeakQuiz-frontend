@@ -205,6 +205,7 @@ input {
   border: solid 2px black;
   box-sizing: border-box;
   background-color: #f0f0f0;
+  padding-left: 10px;
 }
 
 .login-btn {
