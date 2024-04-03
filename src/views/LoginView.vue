@@ -214,6 +214,7 @@ input {
   font-size: 20px;
   border-radius: 5px;
   border: solid 2px black;
+  cursor: pointer;
 }
 
 .register-btn {
@@ -222,6 +223,7 @@ input {
   border-radius: 5px;
   border: solid 2px black;
   margin-top: 20px;
+  cursor: pointer;
 }
 
 .active {
