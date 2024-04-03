@@ -2,6 +2,7 @@
 
 import { onUnmounted } from 'vue'
 import router from '@/router'
+import HeaderComponent from '@/components/reusableComponents/headerComponent.vue'
 
 onUnmounted(() => {
   logoutUser()
@@ -18,5 +19,5 @@ const logoutUser = async () => {
 </script>
 
 <template>
-  Hello
+  <header-component></header-component>
 </template>
