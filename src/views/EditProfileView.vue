@@ -1,5 +1,7 @@
 <template>
-  <accountSettings :userImg="profileImg" />
+  <div class="editProfileView-container">
+    <accountSettings :userImg="profileImg" />
+  </div>
 </template>
 
 <script>
@@ -20,3 +22,14 @@ export default {
   }
 }
 </script>
+<style>
+.editProfileView-container {
+  padding: 0 15rem; /* This adds padding to the left and right */
+}
+
+@media (max-width: 763px) {
+  .editProfileView-container {
+    padding: 0 1rem; /* Less padding on smaller screens */
+  }
+}
+</style>

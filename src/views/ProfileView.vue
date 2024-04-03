@@ -1,19 +1,21 @@
 <template>
-  <ProfileHeader
-      :user-image="userImage"
-      :user-name="userName"
-      :user-title="userTitle"
-      :completed="completed"
-      :rating="rating"
-      :quizzes="quizzes"
-  />
-  <ProfilePageQuizzes
-      :title="CompletedQuizList.title"
-      :is-completed="CompletedQuizList.isCompleted"/>
-  <ProfileRating/>
-  <ProfilePageQuizzes
-      :title="MyQuizList.title"
-      :is-completed="MyQuizList.isCompleted"/>
+  <div class = "profileView-container">
+    <ProfileHeader
+        :user-image="userImage"
+        :user-name="userName"
+        :user-title="userTitle"
+        :completed="completed"
+        :rating="rating"
+        :quizzes="quizzes"
+    />
+    <ProfilePageQuizzes
+        :title="CompletedQuizList.title"
+        :is-completed="CompletedQuizList.isCompleted"/>
+    <ProfileRating/>
+    <ProfilePageQuizzes
+        :title="MyQuizList.title"
+        :is-completed="MyQuizList.isCompleted"/>
+  </div>
 </template>
 
 <script>
@@ -49,3 +51,14 @@ export default {
   }
 }
 </script>
+<style>
+.profileView-container {
+  padding: 0 15rem; /* This adds padding to the left and right */
+}
+
+@media (max-width: 763px) {
+  .profileView-container {
+    padding: 0 1rem; /* Less padding on smaller screens */
+  }
+}
+</style>
