@@ -4,6 +4,7 @@ import router from '@/router'
 import HeaderComponent from '@/components/headerComponent.vue'
 import QuizRowComponent from '@/components/quizRowComponent.vue'
 import CloudAnimationComponent from '@/components/cloudAnimationComponent.vue'
+import FooterComponent from '@/components/footerComponent.vue'
 
 let quizMap = [
   { name: "Quiz 1", url: "/src/assets/test-quiz-image1.webp" },
@@ -15,10 +16,6 @@ let quizMap = [
   { name: "Quiz 7", url: "/src/assets/test-quiz-image1.webp" },
   { name: "Quiz 8", url: "/src/assets/test-quiz-image2.webp" }
 ];
-
-onUnmounted(() => {
-  logoutUser()
-})
 
 const logoutUser = async () => {
   sessionStorage.removeItem("isLoggedIn");
@@ -47,6 +44,7 @@ const logoutUser = async () => {
       <quiz-row-component :row-name="'Geography'" :quiz-map="quizMap"></quiz-row-component>
     </div>
   </div>
+  <footer-component></footer-component>
 </template>
 
 <style scoped>
