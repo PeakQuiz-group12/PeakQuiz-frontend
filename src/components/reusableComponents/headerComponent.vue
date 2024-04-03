@@ -69,7 +69,8 @@ const search = () => {
   border-radius: 5px;
   border: none;
   outline: none;
-  background-color: #f0f0f0;;
+  background-color: #f0f0f0;
+  padding-left: 10px;
 }
 
 .search-btn {
