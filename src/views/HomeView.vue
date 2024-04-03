@@ -1,8 +1,8 @@
 <script setup>
 import { onUnmounted } from 'vue'
 import router from '@/router'
-import HeaderComponent from '@/components/reusableComponents/headerComponent.vue'
-import QuizRowComponent from '@/components/reusableComponents/quizRowComponent.vue'
+import HeaderComponent from '@/components/headerComponent.vue'
+import QuizRowComponent from '@/components/quizRowComponent.vue'
 import CloudAnimationComponent from '@/components/cloudAnimationComponent.vue'
 
 let quizMap = [

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import QuizCardComponent from '@/components/reusableComponents/quizCardComponent.vue';
+import QuizCardComponent from '@/components/quizCardComponent.vue';
 import ArrowLeftComponent from '@/components/iconComponents/arrowLeftComponent.vue'
 import ArrowRightComponent from '@/components/iconComponents/arrowRightComponent.vue'
 
