@@ -1,13 +1,13 @@
 <template>
   <span class="material-symbols-outlined">
-    search
+    arrow_upward_alt
   </span>
 </template>
 
 <style scoped>
 .material-symbols-outlined {
-  color: black;
-  font-size: 30px;
+  color: white;
+  font-size: 25px;
   user-select: none;
 }
 </style>

@@ -1,13 +1,13 @@
 <template>
   <span class="material-symbols-outlined">
-    search
+    contact_support
   </span>
 </template>
 
 <style scoped>
 .material-symbols-outlined {
-  color: black;
-  font-size: 30px;
+  color: white;
+  font-size: 25px;
   user-select: none;
 }
 </style>
