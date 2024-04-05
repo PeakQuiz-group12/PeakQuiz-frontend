@@ -1,5 +1,4 @@
 <script setup>
-import { onUnmounted } from 'vue'
 import router from '@/router'
 import HeaderComponent from '@/components/headerComponent.vue'
 import QuizRowComponent from '@/components/quizRowComponent.vue'
@@ -7,14 +6,14 @@ import CloudAnimationComponent from '@/components/cloudAnimationComponent.vue'
 import FooterComponent from '@/components/footerComponent.vue'
 
 let quizMap = [
-  { name: "Quiz 1", url: "/src/assets/test-quiz-image1.webp" },
-  { name: "Quiz 2", url: "/src/assets/test-quiz-image2.webp" },
-  { name: "Quiz 3", url: "/src/assets/test-quiz-image1.webp" },
-  { name: "Quiz 4", url: "/src/assets/test-quiz-image2.webp" },
-  { name: "Quiz 5", url: "/src/assets/test-quiz-image1.webp" },
-  { name: "Quiz 6", url: "/src/assets/test-quiz-image2.webp" },
-  { name: "Quiz 7", url: "/src/assets/test-quiz-image1.webp" },
-  { name: "Quiz 8", url: "/src/assets/test-quiz-image2.webp" }
+  { quizID: 1, name: "Quiz 1", url: "/src/assets/test-quiz-image1.webp" },
+  { quizID: 2, name: "Quiz 2", url: "/src/assets/test-quiz-image2.webp" },
+  { quizID: 3, name: "Quiz 3", url: "/src/assets/test-quiz-image1.webp" },
+  { quizID: 4, name: "Quiz 4", url: "/src/assets/test-quiz-image2.webp" },
+  { quizID: 5, name: "Quiz 5", url: "/src/assets/test-quiz-image1.webp" },
+  { quizID: 6, name: "Quiz 6", url: "/src/assets/test-quiz-image2.webp" },
+  { quizID: 7, name: "Quiz 7", url: "/src/assets/test-quiz-image1.webp" },
+  { quizID: 8, name: "Quiz 8", url: "/src/assets/test-quiz-image2.webp" }
 ];
 
 const logoutUser = async () => {
