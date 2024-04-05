@@ -110,6 +110,8 @@ input {
 .message textarea {
   width: 100%;
   height: 150px;
+  min-height: 50px;
+  max-height: 500px;
   resize: vertical;
   margin-bottom: 30px;
   border-radius: 5px;

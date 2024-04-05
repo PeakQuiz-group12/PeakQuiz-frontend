@@ -1,10 +1,3 @@
-<template>
-  <div class="donut-chart-container">
-    <div class="donut-chart" :style="donutStyle"></div>
-    <div class="donut-label">{{ correctPercentage.toFixed(0) }}%</div>
-  </div>
-</template>
-
 <script setup>
 import { computed } from 'vue'
 
@@ -24,6 +17,13 @@ const donutStyle = computed(() => {
   };
 });
 </script>
+
+<template>
+  <div class="donut-chart-container">
+    <div class="donut-chart" :style="donutStyle"></div>
+    <div class="donut-label">{{ correctPercentage.toFixed(0) }}%</div>
+  </div>
+</template>
 
 <style scoped>
 .donut-chart-container {
