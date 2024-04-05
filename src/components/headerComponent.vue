@@ -7,16 +7,20 @@ const router = useRouter();
 
 const searchQuery = ref("");
 
-const navigateToHome = () => {
-  router.push('/');
-};
-
 const search = () => {
   console.log(searchQuery.value)
 }
 
+const navigateToHome = () => {
+  router.push('/');
+};
+
 const navigateToProfile = () => {
   router.push('/profile');
+};
+
+const navigateToCreateQuiz = () => {
+  router.push('/createQuiz');
 };
 </script>
 
@@ -30,7 +34,7 @@ const navigateToProfile = () => {
       </button>
     </div>
     <div class="btn-and-profile">
-      <button class="create-btn">Create</button>
+      <button class="create-btn" @click="navigateToCreateQuiz">Create</button>
       <button class="template-btn">Templates</button>
       <img class="profile-img" src="/src/assets/profile-picture.jpg" @click="navigateToProfile" alt="profile picture">
     </div>
@@ -110,6 +114,7 @@ const navigateToProfile = () => {
   border-radius: 5px;
   border: solid 2px black;
   cursor: pointer;
+  color: black;
 }
 
 .profile-img {
