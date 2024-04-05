@@ -7,7 +7,7 @@
 <style scoped>
 .material-symbols-outlined {
   color: white;
-  font-size: 50px;
+  font-size: 40px;
   user-select: none;
 }
 </style>
