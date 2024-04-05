@@ -19,7 +19,14 @@ const router = createRouter({
     {
       path: '/support',
       name: 'support',
-      component: () => import('../views/SupportView.vue')
+      component: () => import('../views/SupportView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/playQuiz',
+      name: 'playQuiz',
+      component: () => import('../views/PlayQuizView.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })
