@@ -33,6 +33,7 @@ import FooterComponent from '@/components/footerComponent.vue'
 
 <style scoped>
 .support-main {
+  flex: 1;
   display: flex;
 }
 
@@ -42,7 +43,6 @@ import FooterComponent from '@/components/footerComponent.vue'
   background-size: auto auto;
   background-position: center;
   background-repeat: no-repeat;
-  height: calc(100vh - 216px);
 }
 
 .content {
@@ -59,6 +59,7 @@ import FooterComponent from '@/components/footerComponent.vue'
   .image-container {
     position: absolute;
     width: 100%;
+    height: 100%;
     z-index: -1;
   }
 
