@@ -14,6 +14,10 @@ const navigateToHome = () => {
 const search = () => {
   console.log(searchQuery.value)
 }
+
+const navigateToProfile = () => {
+  router.push('/profile');
+};
 </script>
 
 <template>
@@ -28,7 +32,7 @@ const search = () => {
     <div class="btn-and-profile">
       <button class="create-btn">Create</button>
       <button class="template-btn">Templates</button>
-      <img class="profile-img" src="/src/assets/profile-picture.jpg" alt="profile picture">
+      <img class="profile-img" src="/src/assets/profile-picture.jpg" @click="navigateToProfile" alt="profile picture">
     </div>
   </header>
 </template>

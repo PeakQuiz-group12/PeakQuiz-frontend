@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import ProfileHeader from '@/components/ProfileHeader.vue';
 import ProfilePageQuizzes from "@/components/ProfilePageQuizzes.vue";
-import ProfileRating from "@/components/ProfileRating";
+import ProfileRating from "@/components/ProfileRating.vue";
 import logo from '@/assets/__test__/ProfilePageAssets/logo.png';
+import ProfileHeader from '@/components/ProfileHeader.vue'
 
 export default {
   name: 'profileView',

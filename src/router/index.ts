@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import axios from 'axios';
 
 const router = createRouter({
@@ -26,6 +25,18 @@ const router = createRouter({
       path: '/playQuiz',
       name: 'playQuiz',
       component: () => import('../views/PlayQuizView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/ProfileView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/editProfile',
+      name: 'editProfile',
+      component: () => import('../views/EditProfileView.vue'),
       meta: { requiresAuth: true }
     }
   ]
