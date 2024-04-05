@@ -1,6 +1,6 @@
 <template>
   <span class="material-symbols-outlined">
-    navigate_next
+    close
   </span>
 </template>
 
@@ -11,3 +11,5 @@
   user-select: none;
 }
 </style>
+<script setup lang="ts">
+</script>

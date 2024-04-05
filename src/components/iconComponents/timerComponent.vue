@@ -1,13 +1,15 @@
 <template>
   <span class="material-symbols-outlined">
-    navigate_next
+    timer
   </span>
 </template>
 
 <style scoped>
 .material-symbols-outlined {
-  color: white;
-  font-size: 40px;
+  color: black;
+  font-size: 25px;
   user-select: none;
 }
 </style>
+<script setup lang="ts">
+</script>
