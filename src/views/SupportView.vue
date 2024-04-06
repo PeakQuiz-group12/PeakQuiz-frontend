@@ -1,6 +1,54 @@
 <script setup>
 import HeaderComponent from '@/components/headerComponent.vue'
 import FooterComponent from '@/components/footerComponent.vue'
+import { ref } from 'vue'
+import { useAuth } from '@/useAuth.js'
+import { useRouter } from 'vue-router'
+
+const { refreshTokenIfNeeded } = useAuth();
+
+const sendMailErr = ref("")
+
+const subject = ref("")
+const message = ref("")
+
+const router = useRouter()
+
+const navigateToHome = () => {
+  router.push('/');
+};
+
+const sendEMail = async () => {
+  const formData = new URLSearchParams();
+  formData.append('username', sessionStorage.getItem("username"));
+  formData.append('subject', subject.value);
+  formData.append('message', message.value);
+
+  const token = await refreshTokenIfNeeded();
+
+  try {
+    const response = await fetch('http://localhost:8080/support', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (response.ok) {
+      const result = await response.text();
+      console.log("successful", result);
+      navigateToHome()
+    } else {
+      console.error(response.status);
+      sendMailErr.value = "Your message was not sent";
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    sendMailErr.value = "Error: " + error.message;
+  }
+};
 </script>
 
 <template>
@@ -11,19 +59,16 @@ import FooterComponent from '@/components/footerComponent.vue'
         <h1>Support</h1>
       </div>
       <div class="login-details">
-        <div class="category">
-          <p>Category</p>
-          <input placeholder="Category">
-        </div>
-        <div class="title">
-          <p>Title</p>
-          <input placeholder="Enter your email address">
+        <div class="subject">
+          <p>Subject</p>
+          <input v-model="subject" placeholder="Subject">
         </div>
         <div class="message">
           <p>Write you message here</p>
-          <textarea></textarea>
+          <textarea v-model="message"></textarea>
         </div>
-        <button class="submit-btn">Submit</button>
+        <button @click="sendEMail" class="submit-btn">Submit</button>
+        <p>{{ sendMailErr }}</p>
       </div>
     </div>
     <div class="image-container"></div>
@@ -81,14 +126,11 @@ import FooterComponent from '@/components/footerComponent.vue'
   margin: 0;
 }
 
-.category, .title {
-  margin-bottom: 30px;
-}
-
 input {
   width: 100%;
   height: 50px;
   font-size: 20px;
+  margin-bottom: 30px;
   border-radius: 5px;
   border: solid 2px black;
   box-sizing: border-box;
