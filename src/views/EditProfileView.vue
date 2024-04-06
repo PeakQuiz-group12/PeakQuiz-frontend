@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import AccountSettings from "@/components/accountSettings";
+import AccountSettings from "@/components/accountSettings.vue";
 import profileImage from "@/assets/__test__/ProfilePageAssets/profileImage.png";
 import { ref } from "vue";
 

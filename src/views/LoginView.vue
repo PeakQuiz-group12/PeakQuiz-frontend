@@ -42,6 +42,7 @@ const loginUser = async () => {
       const token = await response.json();
       sessionStorage.setItem("accessToken", token['accessToken']);
       sessionStorage.setItem("refreshToken", token['refreshToken']);
+      sessionStorage.setItem("username", username.value);
       console.log("Login successful");
       await router.push("/")
     } else {
@@ -74,6 +75,7 @@ const registerUser = async () => {
       console.log("Registration successful");
       sessionStorage.setItem("accessToken", token['accessToken']);
       sessionStorage.setItem("refreshToken", token['refreshToken']);
+      sessionStorage.setItem("username", username.value);
       await router.push("/");
     } else {
       const errorMsg = await response.text();
@@ -93,6 +95,9 @@ const registerUser = async () => {
   }
 };
 
+const navigateToForgotPassword = () => {
+  router.push('/forgotPassword');
+};
 </script>
 
 <template>
@@ -117,7 +122,7 @@ const registerUser = async () => {
         <div class="password">
           <div class="p-and-forgot-password">
             <p>Password</p>
-            <p style="color: #0077C0">Forgot Password</p>
+            <p @click="navigateToForgotPassword" class="forgot-password">Forgot Password</p>
           </div>
           <input v-model="password" placeholder="Enter your password">
           <p class="error" v-if="isLogin">{{ loginErr }}</p>
@@ -186,6 +191,15 @@ const registerUser = async () => {
 .p-and-forgot-password {
   display: flex;
   justify-content: space-between;
+}
+
+.forgot-password {
+  color: #0077C0;
+  cursor: pointer;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
 }
 
 .login-signup-btn {
