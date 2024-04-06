@@ -1,17 +1,23 @@
 <template>
+  <header-component></header-component>
   <div class="editProfileView-container">
     <accountSettings :userImg="profileImg" />
   </div>
+  <footer-component></footer-component>
 </template>
 
 <script>
 import AccountSettings from "@/components/accountSettings.vue";
 import profileImage from "@/assets/__test__/ProfilePageAssets/profileImage.png";
 import { ref } from "vue";
+import HeaderComponent from '@/components/headerComponent.vue'
+import FooterComponent from '@/components/footerComponent.vue'
 
 export default {
   name: "EditProfile",
   components: {
+    FooterComponent,
+    HeaderComponent,
     AccountSettings
   },
   setup() {
