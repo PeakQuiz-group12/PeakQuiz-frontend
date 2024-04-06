@@ -1,15 +1,59 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import SearchIcon from '@/components/iconComponents/searchIcon.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
-
 const searchQuery = ref("");
+const searchResults = ref([]);
+const searchContainer = ref(null);  // Reference to the search container
 
-const search = () => {
-  console.log(searchQuery.value)
-}
+const exampleSearchData = [
+  "History Quiz",
+  "Math Test",
+  "Science Quiz",
+  "Technology News",
+  "Math Homework",
+  "World Geography Quiz",
+  "Physics Exam",
+  "Chemistry Lab",
+  "Programming Challenge",
+  "Biology Fieldwork",
+  "English Literature Essay",
+  "Art History Review",
+  "Digital Media Analysis",
+  "Environmental Science Project",
+  "Statistics Case Study",
+  "Computer Science Algorithms",
+  "Economic Theories",
+  "Ancient Civilizations",
+  "Modern History Debates",
+  "Music Theory Exam"
+];
+
+watch(searchQuery, () => {
+  if (searchQuery.value) {
+    searchResults.value = exampleSearchData
+      .filter(item => item.toLowerCase().includes(searchQuery.value.toLowerCase()))
+      .slice(0, 5);
+  } else {
+    searchResults.value = [];
+  }
+});
+
+const handleOutsideClick = (event) => {
+  if (!searchContainer.value.contains(event.target)) {
+    searchResults.value = [];
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleOutsideClick);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleOutsideClick);
+});
 
 const navigateToHome = () => {
   router.push('/');
@@ -27,11 +71,16 @@ const navigateToCreateQuiz = () => {
 <template>
   <header class="header">
     <div class="logo" @click="navigateToHome">PeakQuiz</div>
-    <div class="search-bar">
-      <input class="search-input" type="search" placeholder="Search..." v-model="searchQuery">
-      <button class="search-btn" @click="search">
-        <SearchIcon class="search-icon"/>
-      </button>
+    <div class="search-container" ref="searchContainer"> <!-- Bind the ref here -->
+      <div class="search-bar">
+        <input class="search-input" type="search" placeholder="Search..." v-model="searchQuery">
+        <button class="search-btn" @click="search">
+          <SearchIcon class="search-icon"/>
+        </button>
+      </div>
+      <ul v-if="searchResults.length" class="search-result-list">
+        <li v-for="result in searchResults" :key="result">{{ result }}</li>
+      </ul>
     </div>
     <div class="btn-and-profile">
       <button class="create-btn" @click="navigateToCreateQuiz">Create</button>
@@ -121,5 +170,26 @@ const navigateToCreateQuiz = () => {
   height: 50px;
   border-radius: 100%;
   cursor: pointer;
+}
+
+.search-result-list {
+  list-style: none;
+  padding: 0;
+  background: white;
+  border: 2px solid black;
+  border-radius: 5px;
+  margin-top: 1px;
+  position: absolute;
+  z-index: 10;
+}
+
+.search-result-list li {
+  padding: 10px;
+  cursor: pointer;
+  color: black;
+}
+
+.search-result-list li:hover {
+  background-color: #f0f0f0;
 }
 </style>
