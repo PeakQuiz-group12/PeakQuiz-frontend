@@ -1,4 +1,5 @@
 <template>
+  <header-component></header-component>
   <div class = "profileView-container">
     <ProfileHeader
         :user-image="userImage"
@@ -16,6 +17,7 @@
         :title="MyQuizList.title"
         :is-completed="MyQuizList.isCompleted"/>
   </div>
+  <footer-component></footer-component>
 </template>
 
 <script>
@@ -23,10 +25,14 @@ import ProfilePageQuizzes from "@/components/ProfilePageQuizzes.vue";
 import ProfileRating from "@/components/ProfileRating.vue";
 import logo from '@/assets/__test__/ProfilePageAssets/logo.png';
 import ProfileHeader from '@/components/ProfileHeader.vue'
+import HeaderComponent from '@/components/headerComponent.vue'
+import FooterComponent from '@/components/footerComponent.vue'
 
 export default {
   name: 'profileView',
   components: {
+    FooterComponent,
+    HeaderComponent,
     ProfileHeader,
     ProfilePageQuizzes,
     ProfileRating
