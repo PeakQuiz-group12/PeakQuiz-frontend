@@ -4,7 +4,7 @@
     <div class="question-list">
 
       <div class="questions">
-        <div v-for="question in props.quiz.questions" :key="question.id" class="question-item" @click="selectQuestion(question)">
+        <div v-for="question in quiz.questions" :key="question.id" class="question-item" @click="selectQuestion(question)">
           {{ question.text }}
         </div>
       </div>
@@ -138,24 +138,19 @@
 import {defineProps, ref} from "vue";
 
 const props = defineProps({
-  quiz: Object,
-})
-const quiz = ref(props.quiz);
-const currentQuestion = ref(quiz.value.questions[0]);
-console.log("Current Question: ", currentQuestion)
-const colors = ['#8D008D', '#FF0000', '#ffb636', '#4545ff'];
-const difficultyColors = ['green', 'blue', 'orange', 'red', 'purple'];
+  quizFromParent: {
+    type: Object,
+    required: true
+  }
+});
 
+const quiz = props.quizFromParent
 
-
-
-const selectQuestion = (question) => {
-  currentQuestion.value = question;
-};
-
-const addQuestion = () => {
-  const newQuestion = {
-    id: quiz.value.questions.length + 1,
+const currentQuestion = ref(null);
+if(!quiz.questions.length)
+{
+  const defaultQuestion = {
+    id: 1,
     text: '',
     media: null,
     questionType: 'Quiz',
@@ -166,7 +161,32 @@ const addQuestion = () => {
       { text: '', isCorrect: false },
     ],
   };
-  quiz.value.questions = [...quiz.value.questions, newQuestion];
+  quiz.questions.push(defaultQuestion);
+  currentQuestion.value = defaultQuestion;
+}else{
+  currentQuestion.value = quiz.questions[0];
+}
+const colors = ['#8D008D', '#FF0000', '#ffb636', '#4545ff'];
+const difficultyColors = ['green', 'blue', 'orange', 'red', 'purple'];
+
+const selectQuestion = (question) => {
+  currentQuestion.value = question;
+};
+
+const addQuestion = () => {
+  const newQuestion = {
+    id: quiz.questions.length + 1,
+    text: '',
+    media: null,
+    questionType: 'Quiz',
+    answers: [
+      { text: '', isCorrect: false },
+      { text: '', isCorrect: false },
+      { text: '', isCorrect: false },
+      { text: '', isCorrect: false },
+    ],
+  };
+  quiz.questions = [...quiz.questions, newQuestion];
   currentQuestion.value = newQuestion;
 };
 
@@ -211,9 +231,9 @@ const changeOption = (event) => {
   }
 
   // Update the question in the quiz
-  const questionIndex = quiz.value.questions.findIndex(q => q.id === currentQuestion.value.id);
+  const questionIndex = quiz.questions.findIndex(q => q.id === currentQuestion.value.id);
   if (questionIndex !== -1) {
-    quiz.value.questions[questionIndex] = {...currentQuestion.value};
+    quiz.questions[questionIndex] = {...currentQuestion.value};
   }
 };
 
@@ -229,18 +249,18 @@ const updateOption = (event, index) => {
   }
 
   // Update the corresponding question in the quiz
-  const questionIndex = quiz.value.questions.findIndex(q => q.id === currentQuestion.value.id);
+  const questionIndex = quiz.questions.findIndex(q => q.id === currentQuestion.value.id);
   if (questionIndex !== -1) {
-    quiz.value.questions[questionIndex].answers[index] = currentQuestion.value.answers[index];
+    quiz.questions[questionIndex].answers[index] = currentQuestion.value.answers[index];
   }
 };
 
 const changeDifficulty = (event) => {
   currentQuestion.value.difficulty = event.target.value;
   // Update the question in the quiz
-  const questionIndex = quiz.value.questions.findIndex(q => q.id === currentQuestion.value.id);
+  const questionIndex = quiz.questions.findIndex(q => q.id === currentQuestion.value.id);
   if (questionIndex !== -1) {
-    quiz.value.questions[questionIndex] = {...currentQuestion.value};
+    quiz.questions[questionIndex] = {...currentQuestion.value};
   }
 };
 const resetFileInput = () => {
@@ -738,7 +758,4 @@ input[type="radio"]:checked + .difficulty-scale {
     flex: 1; /* 1/3 of the width */
   }
 }
-
-
-
 </style>
