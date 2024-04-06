@@ -9,20 +9,28 @@ import CheckComponent from '@/components/iconComponents/checkComponent.vue'
 import CrossComponent from '@/components/iconComponents/crossComponent.vue'
 import PieChartComponent from '@/components/pieChartComponent.vue'
 
-let quiz = ref({ quizTitle: "Easy Math Quiz",
+const quiz = ref({ quizTitle: "Easy Math Quiz",
   questions: [
-    { questionID: 5231, questionImage: "/src/assets/test-quiz-image1.webp", question: "What is 5 + 3", answerOptions: { option1: "7", option2: "5", option3: "10", correctAnswer: "8" }},
+    { questionID: 5231, questionImage: "/src/assets/test-quiz-image1.webp", question: "Is the earth flat?", answerOptions: { option1: "true", correctAnswer: "false" }},
     { questionID: 1242, questionImage: "/src/assets/test-quiz-image2.webp", question: "What was the name of the first man on the moon?", answerOptions: { option1: "Buzz Aldrin", option2: "Buzz Lightyear", option3: "Lance Armstrong", correctAnswer: "Niel Armstrong" }},
-    { questionID: 5743, questionImage: "/src/assets/test-quiz-image1.webp", question: "What is 18 / 3", answerOptions: { option1: "4", option2: "5", option3: "9", correctAnswer: "6" }},
-    { questionID: 4236, questionImage: "/src/assets/test-quiz-image2.webp", question: "What is 62 + 5", answerOptions: { option1: "64", option2: "65", option3: "69", correctAnswer: "67" }},
-    { questionID: 9643, questionImage: "/src/assets/test-quiz-image1.webp", question: "What is 5 * 12 + 1", answerOptions: { option1: "65", option2: "320", option3: "76", correctAnswer: "61" }},
+    { questionID: 5743, questionImage: "/src/assets/test-quiz-image1.webp", question: "What is car in norwegian", answerOptions: { correctAnswer: "bil" }},
+    { questionID: 4236, questionImage: "/src/assets/test-quiz-image2.webp", question: "What is the name of agent 007", answerOptions: { correctAnswer: "James Bond" }},
+    { questionID: 9643, questionImage: "/src/assets/test-quiz-image1.webp", question: "Hei", answerOptions: { correctAnswer: "hei" }},
     { questionID: 1286, questionImage: "/src/assets/test-quiz-image2.webp", question: "What is 80 - 125", answerOptions: { option1: "0", option2: "-60", option3: "30", correctAnswer: "-45" }},
     { questionID: 3896, questionImage: "/src/assets/test-quiz-image1.webp", question: "What is 4 / (2 + 2)", answerOptions: { option1: "6", option2: "4", option3: "0", correctAnswer: "1" }},
 ]})
 
+function initializeUserAnswers() {
+  userAnswers.value = quiz.value.questions.map(question => ({
+    questionID: question.questionID,
+    userAnswer: ""  // Initialize with a blank string
+  }));
+}
+
 onMounted(() => {
   quiz.value.questions = shuffle(quiz.value.questions);
   startTimer();
+  initializeUserAnswers()
 });
 
 const inGame = ref(true)
@@ -31,11 +39,7 @@ const userAnswers = ref([])
 
 const updateUserAnswer = (questionID, answer) => {
   const existingAnswerIndex = userAnswers.value.findIndex(ans => ans.questionID === questionID);
-  if (existingAnswerIndex !== -1) {
-    userAnswers.value[existingAnswerIndex].userAnswer = answer;
-  } else {
-    userAnswers.value.push({ questionID, userAnswer: answer });
-  }
+  userAnswers.value[existingAnswerIndex].userAnswer = answer;
 };
 
 const getUserAnswer = (questionID) => {
@@ -95,12 +99,19 @@ const formattedTimer = computed(() => {
 
 const finishGame = () => {
   stopTimer()
+  checkAnswersLowerCase()
   inGame.value = false;
 }
 
+const checkAnswersLowerCase = () => {
+  for (const question of quiz.value.questions) {
+    if (getUserAnswer(question.questionID).toLowerCase() === question.answerOptions.correctAnswer.toLowerCase()) {
+      updateUserAnswer(question.questionID, question.answerOptions.correctAnswer)
+    }
+  }
+}
+
 const handleNextButtonClick = () => {
-  console.log(currentQuestion.value)
-  console.log(totalQuestions)
   if (currentQuestion.value === totalQuestions) {
     finishGame();
   } else {
@@ -182,7 +193,8 @@ onMounted(() => {
         <img class="question-img" :src="quiz.questions[currentQuestion - 1].questionImage" alt="question image">
         <h1>{{ quiz.questions[currentQuestion - 1].question }}</h1>
         <div class="answer-options">
-          <button v-for="(answerOption, index) in currentQuestionOptions"
+          <input v-if="currentQuestionOptions.length === 1" v-model="userAnswers[currentQuestion - 1].userAnswer" class="answer-input" placeholder="Your answer">
+          <button v-else v-for="(answerOption, index) in currentQuestionOptions"
                   :key="index"
                   :style="{ backgroundColor: getColorForAnswerOption(index) }"
                   class="answer-options-btn"
@@ -416,5 +428,17 @@ h1 {
 
 .answered {
   background-color: #6e6e6e;
+}
+
+.answer-input {
+  width: 80%;
+  height: 50px;
+  font-size: 20px;
+  margin-bottom: 30px;
+  border-radius: 5px;
+  border: solid 2px black;
+  box-sizing: border-box;
+  background-color: #f0f0f0;
+  padding-left: 10px;
 }
 </style>
