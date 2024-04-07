@@ -20,7 +20,7 @@ describe('Quiz Component Tests', () => {
         cy.url().should('include', '/'); // Move this to the appropriate place if needed
     });
 
-    it('allows a user to complete a quiz', () => {
+    it('allows a user to play a quiz', () => {
         cy.visit('/playQuiz/1'); // Adjust URL as necessary
         // Assuming each question has a unique selector or class
         /*

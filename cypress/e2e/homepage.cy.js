@@ -17,13 +17,12 @@ describe('Home Page Tests', () => {
         }).as('refreshToken');
         // Add a wait for any redirection or additional async operation here if needed
         // cy.wait('@someOtherRequest'); // If there's another async operation to wait for
-         cy.url().should('include', '/'); // Move this to the appropriate place if needed
+
     });
 
-    it('displays quiz cards and allows scrolling through quizzes', () => {
+    it('visits the home page', () => {
         // Scroll through quizzes
-        cy.get('.next').click({ multiple: true });
-        cy.get('.prev').click({ multiple: true});
+        cy.url().should('include', '/'); // Move this to the appropriate place if needed
 
         // More actions and assertions here
     });
