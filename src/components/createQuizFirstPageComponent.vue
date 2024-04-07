@@ -16,11 +16,38 @@ const description = ref("")
 const imageUrl = ref("https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Closeup_of_pixels.JPG/220px-Closeup_of_pixels.jpg")
 
 
+const showTitleErr = ref(false)
+const showDescriptionErr = ref(false)
+const showImageErr = ref(false)
+
 function toggleDropdown() {
   isOpen.value = !isOpen.value;
 }
 
 function handleSubmit() {
+  if (title.value.length < 5) {
+    showTitleErr.value = true
+    return
+  }
+  else {
+    showTitleErr.value = false
+  }
+
+  if (description.value.length < 10) {
+    showDescriptionErr.value = true
+    return
+  }
+  else {
+    showDescriptionErr.value = false
+  }
+  if (!((imageUrl.value.startsWith('http://') || imageUrl.value.startsWith('https://')) && (imageUrl.value.endsWith('jpg') || imageUrl.value.endsWith('jpeg') || imageUrl.value.endsWith('png') || imageUrl.value.endsWith('gif')))) {
+    showImageErr.value = true
+    return
+  }
+  else {
+    showImageErr.value = false
+  }
+
   emit('submitBtnClicked', { title: title.value, categories: selectedOptions.value, description: description.value, imageUrl: imageUrl.value});
 }
 </script>
@@ -36,6 +63,7 @@ function handleSubmit() {
         <div class="title">
           <p>Quiz Title</p>
           <input v-model="title" class="text-input" placeholder="Quiz title">
+          <p v-if="showTitleErr" class="error">A quiz title must be 5 letter or longer</p>
         </div>
         <div class="dropdown">
           <button @click="toggleDropdown" class="dropdown-button">
@@ -59,10 +87,12 @@ function handleSubmit() {
         <div class="description">
           <p>Quiz description</p>
           <textarea v-model="description" placeholder="Write a description"></textarea>
+          <p v-if="showDescriptionErr" class="error">The quiz description must be 10 letter or longer</p>
         </div>
         <div class="title">
           <p>Upload image</p>
           <input v-model="imageUrl" class="text-input" placeholder="Image url">
+          <p v-if="showImageErr" class="error">An image url must start with either http:// or https://, and end with either jpg, jpeg, png, or gif</p>
         </div>
         <button @click="handleSubmit" class="submit-btn">Submit</button>
       </div>
@@ -174,7 +204,7 @@ function handleSubmit() {
 }
 
 .title {
-  margin-bottom: 30px;
+  margin: 30px 0;
 }
 
 .text-input {
@@ -217,10 +247,13 @@ function handleSubmit() {
   min-height: 50px;
   max-height: 500px;
   resize: vertical;
-  margin-bottom: 30px;
   border-radius: 5px;
   border: solid 2px black;
   box-sizing: border-box;
   background-color: #f0f0f0;
+}
+
+.error {
+  color: #b00000;
 }
 </style>
