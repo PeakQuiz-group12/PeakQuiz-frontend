@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 module.exports = (on, config) => {
     require('@cypress/code-coverage/task')(on, config);
 

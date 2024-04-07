@@ -33,7 +33,7 @@ describe('Profile View Tests', () => {
         cy.get('.stats .stat').should('contain', '4.5');
     });
     Cypress.on('uncaught:exception', (err, runnable) => {
-        // returning false here prevents Cypress from failing the test
+        // eslint-disable-next-line no-unused-vars
         return false;
     });
 
