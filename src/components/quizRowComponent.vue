@@ -27,8 +27,7 @@ const scroll = (direction) => {
         <quiz-card-component
           v-for="(quiz, index) in quizMap"
           :key="index"
-          :quiz-name="quiz.name"
-          :image-url="quiz.url"
+          :quiz="quiz"
         ></quiz-card-component>
       </div>
     </div>

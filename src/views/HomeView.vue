@@ -1,34 +1,26 @@
 <script setup>
-import router from '@/router'
 import HeaderComponent from '@/components/headerComponent.vue'
 import QuizRowComponent from '@/components/quizRowComponent.vue'
 import CloudAnimationComponent from '@/components/cloudAnimationComponent.vue'
 import FooterComponent from '@/components/footerComponent.vue'
 
-let quizMap = [
-  { quizID: 1, name: "Quiz 1", url: "/src/assets/test-quiz-image1.webp" },
-  { quizID: 2, name: "Quiz 2", url: "/src/assets/test-quiz-image2.webp" },
-  { quizID: 3, name: "Quiz 3", url: "/src/assets/test-quiz-image1.webp" },
-  { quizID: 4, name: "Quiz 4", url: "/src/assets/test-quiz-image2.webp" },
-  { quizID: 5, name: "Quiz 5", url: "/src/assets/test-quiz-image1.webp" },
-  { quizID: 6, name: "Quiz 6", url: "/src/assets/test-quiz-image2.webp" },
-  { quizID: 7, name: "Quiz 7", url: "/src/assets/test-quiz-image1.webp" },
-  { quizID: 8, name: "Quiz 8", url: "/src/assets/test-quiz-image2.webp" }
-];
+import { onMounted, ref } from 'vue'
+import { useQuizStore } from '@/stores/quizStore.js'
 
-const logoutUser = async () => {
-  sessionStorage.removeItem("isLoggedIn");
-  sessionStorage.removeItem("username");
-  sessionStorage.removeItem("accessToken");
-  sessionStorage.removeItem("refreshToken");
-  await router.push("/")
-  console.log("Logout successful");
-}
+const store = useQuizStore()
+
+
+const quizMap = ref(null)
+
+onMounted(async () => {
+  await store.fetchQuizzes()
+  quizMap.value = store.quizzes.content
+})
 </script>
 
 <template>
   <header-component></header-component>
-  <div class="home-main">
+  <div v-if="quizMap !== null" class="home-main">
     <div class="image-container">
       <div class="hidden-text">
         <div class="logo">PeakQuiz</div>
