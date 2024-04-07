@@ -17,41 +17,20 @@
     <div class ="editor-options-container">
       <!-- question editor -->
       <div class="question-editor">
+        <p>Question text</p>
         <input
             class="questionText"
             type="text"
             placeholder="Enter question text"
             v-model="currentQuestion.text"
         />
-
-        <!-- Display uploaded file -->
-        <div v-if="currentQuestion.media" class="uploaded-file-display">
-          <img v-if="isImageFile(currentQuestion.media.type)" :src="currentQuestion.media.url" alt="Uploaded Image" />
-          <video v-else-if="isVideoFile(currentQuestion.media.type)" :src="currentQuestion.media.url" controls></video>
-          <button @click="resetFileInput" class="remove-file-button">Remove Image/Video</button>
-        </div>
-
-        <!-- FileUploader component -->
-        <div class="upload-file-container" v-if="!currentQuestion.media">
-          <div class="file-uploader">
-            <input
-                type="file"
-                id="file-upload"
-                @change="handleFileUpload"
-                hidden
-                ref="fileInput"
-            />
-            <label for="file-upload" class="file-upload-label">
-              <div class="upload-icon-border">
-                <p class="upload-icon">+</p>
-              </div>
-              <p class="upload-text">Find and insert media</p>
-              <p class="upload-text">Upload file or drag here to upload</p>
-            </label>
-          </div>
-        </div>
-
-
+        <p class="question-image-url-p">Question image url</p>
+        <input
+          class="questionText"
+          type="text"
+          placeholder="Enter question image url"
+          v-model="currentQuestion.media"
+        />
 
         <div v-if="currentQuestion && currentQuestion.answers" class="answer-container">
           <div class="answer-item" v-for="(editableAnswer, index) in currentQuestion.answers" :key="index"
@@ -235,10 +214,10 @@ const changeOption = (event) => {
   switch (newQuestionType) {
     case 'MULTIPLE_CHOICE':
       currentQuestion.value.answers = [
-        { answer: 'ewf', isAnswer: false },
-        { answer: 'wef', isAnswer: false },
-        { answer: 'ewf', isAnswer: false },
-        { answer: 'wef', isAnswer: false },
+        { answer: '', isAnswer: false },
+        { answer: '', isAnswer: false },
+        { answer: '', isAnswer: false },
+        { answer: '', isAnswer: false },
       ];
       break;
     case 'True or False':
@@ -248,7 +227,7 @@ const changeOption = (event) => {
       ];
       break;
     case 'FILL_IN_BLANK':
-      currentQuestion.value.answers = [{ answer: 'wefwf', isAnswer: true }];
+      currentQuestion.value.answers = [{ answer: '', isAnswer: true }];
       break;
     default:
       break;
@@ -764,5 +743,8 @@ input[type="radio"]:checked + .difficulty-scale {
   .options {
     flex: 1; /* 1/3 of the width */
   }
+}
+.question-image-url-p {
+  margin-top: 5px;
 }
 </style>
