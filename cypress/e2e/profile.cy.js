@@ -32,13 +32,8 @@ describe('Profile View Tests', () => {
         cy.get('.user-info h1').should('contain', 'newuser');
         cy.get('.stats .stat').should('contain', '4.5');
     });
-    Cypress.on('uncaught:exception', (err, runnable) => {
-        // eslint-disable-next-line no-unused-vars
+    Cypress.on('uncaught:exception', () => {
         return false;
     });
-
-
-
-
     // Additional tests to cover all components and functionalities
 });
