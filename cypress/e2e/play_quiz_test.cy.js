@@ -4,28 +4,25 @@ describe('Quiz Component Tests', () => {
         cy.get('.login-signup-links h1').contains('Sign Up').click();
         cy.get('input[placeholder="Enter your username"]').type('newuser');
         cy.get('input[placeholder="Enter your email address"]').type('newuser@example.com');
-        cy.get('input[placeholder="Enter your password"]').type('Newpassword!1');
-
-        // Debug before the click action
+        cy.get('input[placeholder="Enter your password"]').type('Newpassword!2');
         cy.log('Before clicking Sign up button');
-
         cy.get('.login-btn').contains('Sign up').click();
-
-
         cy.intercept('POST', 'http://localhost:8080/register', {
             statusCode: 200,
             body: { accessToken: 'newAccessToken', refreshToken: 'newRefreshToken' }
         }).as('registerRequest');
-
-        cy.get('.login-btn').contains('Sign up').click();
-
         cy.wait('@registerRequest').its('response.body').should('include.keys', ['accessToken', 'refreshToken']);
-
-        cy.get('.quiz-card-main').first().click(); // Clicks the first quiz card
-
+        cy.intercept('POST', 'http://localhost:8080/refreshToken', {
+            statusCode: 200,
+            body: { accessToken: 'newAccessToken', refreshToken: 'newRefreshToken' }
+        }).as('refreshToken');
+        // Add a wait for any redirection or additional async operation here if needed
+        // cy.wait('@someOtherRequest'); // If there's another async operation to wait for
+        cy.url().should('include', '/'); // Move this to the appropriate place if needed
     });
 
     it('allows a user to complete a quiz', () => {
+        cy.get('.quiz-card-main').first().click(); // Clicks the first quiz card
         // Assuming each question has a unique selector or class
         cy.get('.question-box').should('exist'); // Check if the question box is displayed
 

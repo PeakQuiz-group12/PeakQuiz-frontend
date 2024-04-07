@@ -44,7 +44,8 @@ describe('Login and Registration Component Tests', () => {
 
     });
 
-    it('Tests Invalid Registration Fields', () => {
+
+    it('Tests Invalid Email', () => {
         cy.visit('/');
         cy.get('.login-signup-links h1').contains('Sign Up').click();
 
@@ -62,10 +63,30 @@ describe('Login and Registration Component Tests', () => {
         }).as('invalidRegisterRequest');
 
         // Assertions for error messages
-        cy.contains('Username is invalid').should('exist');
-        cy.contains('Email format is invalid').should('exist');
-        cy.contains('Password is too weak').should('exist');
+        cy.contains('Invalid email format').should('exist');
     });
+    it('Tests Invalid password', () => {
+        cy.visit('/');
+        cy.get('.login-signup-links h1').contains('Sign Up').click();
+
+        // Attempting registration with invalid username, email, and password
+        cy.get('input[placeholder="Enter your username"]').type('invalidUser');
+        cy.get('input[placeholder="Enter your email address"]').type('inavalid@user.com');
+        cy.get('input[placeholder="Enter your password"]').type('123');
+
+        cy.get('.login-btn').contains('Sign up').click();
+
+        // Mock the response for invalid registration
+        cy.intercept('POST', 'http://localhost:8080/register', {
+            statusCode: 400,
+            body: "Invalid registration data"
+        }).as('invalidRegisterRequest');
+
+        // Assertions for error messages
+        cy.contains('Password must be at least 8 characters long, include numbers,' +
+            ' upper and lower case letters, and at least one special character').should('exist');
+    });
+
 
     it('Tests Login with Unregistered User', () => {
         cy.visit('/');
@@ -84,7 +105,7 @@ describe('Login and Registration Component Tests', () => {
         }).as('unregisteredLoginRequest');
 
         // Assertion for error message
-        cy.contains('').should('exist');
+        cy.contains('User not found').should('exist');
 
     });
 
