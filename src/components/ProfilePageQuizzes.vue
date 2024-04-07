@@ -6,12 +6,12 @@
     <!-- Quizzes list -->
     <div v-if="games.length > 0">
       <div class="quizzes">
-        <div v-for="game in paginatedGames" :key="game.id" class="quiz-item" @click="navigateToQuiz(game.quizId)">
+        <div v-for="game in props.games" :key="game.id" class="quiz-item" @click="navigateToQuiz(game.quizId)">
           <div class="quiz-details">
             <div class="quiz-title-container">
               <h3>{{ findQuizTitle(game.quizId) }}</h3>
             </div>
-            <CircularProgress :score="game.correctAnswers" :max-score="quiz.questions.length"></CircularProgress>
+            <CircularProgress :score="game.correctAnswers" :max-score=10></CircularProgress>
           </div>
         </div>
       </div>
@@ -37,15 +37,13 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
-  tags: {
-    type: Array,
-    default: () => []
-  },
   quizzes: {
     type: Array,
     default: () => []
   },
 });
+
+console.log(props.games)
 
 
 const pageSize = ref(window.innerWidth > 768 ? 5 : 10);
