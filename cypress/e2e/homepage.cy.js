@@ -2,8 +2,8 @@ describe('Home Page Tests', () => {
     beforeEach(() => {
         cy.visit('/');
         cy.get('.login-signup-links h1').contains('Sign Up').click();
-        cy.get('input[placeholder="Enter your username"]').type('testUser');
-        cy.get('input[placeholder="Enter your email address"]').type('testUser@example.com');
+        cy.get('input[placeholder="Enter your username"]').type('testUser1');
+        cy.get('input[placeholder="Enter your email address"]').type('testUser1@example.com');
         cy.get('input[placeholder="Enter your password"]').type('Newpassword!2');
         cy.log('Before clicking Sign up button');
         cy.get('.login-btn').contains('Sign up').click();

@@ -23,8 +23,8 @@ describe('Login and Registration Component Tests', () => {
     it('Tests Sign Up Functionality', () => {
         cy.visit('/');
         cy.get('.login-signup-links h1').contains('Sign Up').click();
-        cy.get('input[placeholder="Enter your username"]').type('newuser');
-        cy.get('input[placeholder="Enter your email address"]').type('newuser@example.com');
+        cy.get('input[placeholder="Enter your username"]').type('newuser2');
+        cy.get('input[placeholder="Enter your email address"]').type('newuser2@example.com');
         cy.get('input[placeholder="Enter your password"]').type('Newpassword!1');
 
         // Debug before the click action
