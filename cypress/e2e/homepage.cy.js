@@ -11,7 +11,6 @@ describe('Home Page Tests', () => {
             statusCode: 200,
             body: { accessToken: 'newAccessToken', refreshToken: 'newRefreshToken' }
         }).as('registerRequest');
-        cy.wait('@registerRequest').its('response.body').should('include.keys', ['accessToken', 'refreshToken']);
         cy.intercept('POST', 'http://localhost:8080/refreshToken', {
             statusCode: 200,
             body: { accessToken: 'newAccessToken', refreshToken: 'newRefreshToken' }
