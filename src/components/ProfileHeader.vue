@@ -5,25 +5,15 @@
     </div>
     <div class="user-info">
       <div class = "user-info-username">
-        <h1 v-if="userName">{{ userName }}</h1>
-        <h1 v-else>No Username</h1>
-        <button v-on:click="goToEditProfile" class="editProfileBtn">Edit&nbsp;Profile</button>
+        <h1>{{ userName }}</h1>
       </div>
 
       <p>{{ userTitle }}</p>
     </div>
     <div class="stats">
       <div class="stat">
-        <span class="number">{{ completed }}</span>
-        <span class="label">Completed</span>
-      </div>
-      <div class="stat">
-        <span class="number">{{ rating }}</span>
-        <span class="label">Rating</span>
-      </div>
-      <div class="stat">
         <span class="number">{{ quizzes }}</span>
-        <span class="label">Quizzes</span>
+        <span class="label">Completed</span>
       </div>
     </div>
   </div>
@@ -47,14 +37,8 @@ export default {
       default: 'Trivia Titan'
     },
     completed: Number,
-    rating: Number,
     quizzes: Number
   },
-  methods: {
-    goToEditProfile(){
-      this.$router.push("/editProfile")
-    }
-  }
 };
 </script>
 
