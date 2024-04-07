@@ -27,10 +27,11 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: '/playQuiz',
+      path: '/playQuiz/:quizId', // Modified path to include quizId as a route parameter
       name: 'playQuiz',
       component: () => import('../views/PlayQuizView.vue'),
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
+      props: true
     },
     {
       path: '/createQuiz',

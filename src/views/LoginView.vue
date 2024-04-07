@@ -59,7 +59,7 @@ const loginUser = async () => {
 const registerUser = async () => {
   const formData = new URLSearchParams();
   formData.append('username', username.value);
-  formData.append('email', email.value);
+  formData.append('mail', email.value);
   formData.append('password', password.value);
 
   try {
