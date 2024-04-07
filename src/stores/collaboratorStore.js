@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useAuth } from '@/useAuth.js'
 
-export const collaboratorStore = defineStore('collaborators', () => {
+export const useCollaboratorStore = defineStore('collaborators', () => {
     const collaborators = ref([]);
     const userQuizzes = ref([]);
     const backendURL = 'http://localhost:8080';
@@ -32,13 +33,19 @@ export const collaboratorStore = defineStore('collaborators', () => {
         }
     };
 
-    // Fetch quizzes for a user based on collaboration type
-    const fetchUserQuizzes = async (userId, collaboratorType, page = 0, size = 5, sort = 'createdOn:desc') => {
+    const fetchUserQuizzes = async (collaboratorString) => {
+        const { refreshTokenIfNeeded } = useAuth();
+        const token = await refreshTokenIfNeeded();
+
         try {
-            const response = await fetch(`${backendURL}/collaborations/quiz?userId=${userId}&collaboratorType=${collaboratorType}&page=${page}&size=${size}&sort=${sort}`, {
+            const response = await fetch(`${backendURL}/users/me/quizzes?collaboratorType=` + collaboratorString, {
                 method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
             });
-            userQuizzes.value = (await response.json()).content; // Assuming the response has a 'content' field
+            userQuizzes.value = (await response.json());
         } catch (error) {
             console.error('Error fetching user quizzes:', error);
         }

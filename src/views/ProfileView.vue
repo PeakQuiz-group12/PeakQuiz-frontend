@@ -20,6 +20,7 @@
         <p class="question" @click="navigateToPlayQuiz(question.quizId)" v-for="(question, index2) in tag.questions" :key=index2>{{ question.text }}</p>
       </div>
     </div>
+    <quiz-row-component :row-name="'Your Quizzes'" :quiz-map="usersQuizzes.content"></quiz-row-component>
   </div>
   <footer-component></footer-component>
 </template>
@@ -31,14 +32,18 @@ import ProfilePageQuizzes from '@/components/ProfilePageQuizzes.vue'
 import FooterComponent from '@/components/footerComponent.vue'
 import { ref, onMounted } from "vue";
 import { useUserStore } from '@/stores/userStore.js'
+import { useCollaboratorStore } from '@/stores/collaboratorStore.js'
 import { useRouter } from 'vue-router'
+import QuizRowComponent from '@/components/quizRowComponent.vue'
 
 const userStore = useUserStore();
+const collaboratorStore = useCollaboratorStore()
 
 // State exposed to the template
 const games = ref([]);
 const tags = ref([]);
 const quizzes = ref([]);
+const usersQuizzes = ref([])
 const userName = userStore.username;
 const completed = quizzes.value.length;
 const userImage = "/src/assets/profile-picture.jpg";
@@ -47,9 +52,11 @@ const userTitle = "Software Engineer";
 onMounted(async () => {
   await userStore.fetchGames();
   await userStore.fetchTags()
+  await collaboratorStore.fetchUserQuizzes("CREATOR")
 
   games.value = userStore.games;
   tags.value = userStore.tags
+  usersQuizzes.value = collaboratorStore.userQuizzes
 
   if (games.value) {
     await userStore.fetchPlayedQuizzes(games.value);
