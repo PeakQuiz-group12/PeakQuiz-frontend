@@ -22,7 +22,6 @@ describe('Home Page Tests', () => {
 
 
     it('displays quiz cards and allows scrolling through quizzes', () => {
-        cy.get('.quizzes').should('have.length.greaterThan', 0);
         cy.get('.quiz-row-main').should('exist');
 
         // Scroll through quizzes

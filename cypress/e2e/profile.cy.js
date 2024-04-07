@@ -1,6 +1,6 @@
 describe('Profile View Tests', () => {
 
-    beforeEach(() => {
+    it('Should display profile elements with users username', () => {
         cy.visit('/');
         cy.get('.login-signup-links h1').contains('Sign Up').click();
         cy.get('input[placeholder="Enter your username"]').type('newUser');
@@ -18,13 +18,8 @@ describe('Profile View Tests', () => {
         }).as('refreshToken');
         // Add a wait for any redirection or additional async operation here if needed
         // cy.wait('@someOtherRequest'); // If there's another async operation to wait for
-         cy.url().should('include', '/'); // Move this to the appropriate place if needed
+        cy.url().should('include', '/'); // Move this to the appropriate place if needed
         cy.get('.profile-img').click();
-    });
-
-
-    it('Should display profile elements with users username', () => {
-
         cy.get('.profileView-container').should('exist');
         cy.get('.profile-header').should('exist');
         cy.get('.profile-image').should('have.attr', 'src', '/src/assets/profile-picture.jpg');
