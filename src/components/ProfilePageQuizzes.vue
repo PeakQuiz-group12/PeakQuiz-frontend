@@ -1,41 +1,23 @@
 <template>
   <!-- Title of the list-->
-  <h3 class="title">{{title}}</h3>
-
+  <h3 class="title">Completed</h3>
   <div class="divider"></div>
-
   <div class="quiz-list">
-
     <!-- Quizzes list -->
-    <div v-if="isCompleted">
+    <div v-if="games.length > 0">
       <div class="quizzes">
-        <div v-for="quiz in quizzesToShow" :key="quiz.id" class="quiz-item">
+        <div v-for="game in paginatedGames" :key="game.id" class="quiz-item" @click="navigateToQuiz(game.quizId)">
           <div class="quiz-details">
             <div class="quiz-title-container">
-              <h3>{{ quiz.title }}</h3>
+              <h3>{{ findQuizTitle(game.quizId) }}</h3>
             </div>
-            <CircularProgress
-                :score="quiz.score"
-                :max-score="quiz.maxScore"
-            ></CircularProgress>
+            <CircularProgress :score="game.correctAnswers" :max-score="quiz.questions.length"></CircularProgress>
           </div>
         </div>
       </div>
     </div>
     <div v-else>
-      <div class="quizzes">
-        <div v-for="quiz in quizzesToShow" :key="quiz.id" class="quiz-item">
-          <div class="quiz-details">
-            <div class="quiz-title-container">
-              <h3>{{ quiz.title }}</h3>
-            </div>
-            <CircularProgress
-                :score="quiz.score"
-                :max-score="quiz.maxScore"
-            ></CircularProgress>
-          </div>
-        </div>
-      </div>
+      <h1>No quizzed found :(</h1>
     </div>
 
     <!-- Infinite scroll loading for mobile -->
@@ -46,105 +28,56 @@
 </template>
 
 
-<script>
-
+<script setup>
+import { ref, computed, onMounted } from 'vue';
 import CircularProgress from './CircularProgress.vue';
 
-export default {
-  components:{
-    CircularProgress
+const props = defineProps({
+  games: {
+    type: Array,
+    default: () => []
   },
-  data() {
-    return {
-      quizzes: [], // Initialize with mock quizzes
-      pageSize: 5,
-      currentPage: 0,
-      isDesktop: window.innerWidth > 768,
-      isLoading: false,
-    };
+  tags: {
+    type: Array,
+    default: () => []
   },
-  computed: {
-    quizzesToShow() {
-      if (this.isDesktop) {
-        let start = this.currentPage * this.pageSize;
-        return this.quizzes.slice(start, start + this.pageSize);
-      } else {
-        return this.quizzes;
-      }
-    },
+  quizzes: {
+    type: Array,
+    default: () => []
   },
-  methods: {
-    loadQuizzes() {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          let newQuizzes = this.mockFetchQuizzes();
-          resolve(newQuizzes);
-        }, 1000);
-      });
-    },
-    loadMoreQuizzes() {
-      this.isLoading = true;
-      this.loadQuizzes().then((newQuizzes) => {
-        if (this.isDesktop) {
-          this.currentPage++;
-        } else {
-          this.quizzes.push(...newQuizzes);
-        }
-        this.isLoading = false;
-      });
-    },
-    mockFetchQuizzes() {
-      let moreQuizzes = [];
+});
 
-      for (let i = 0; i < (this.isDesktop ? this.pageSize : 10); i++) {
-        moreQuizzes.push({
-          id: this.quizzes.length + i,
-          title: `Quiz ${this.quizzes.length + i}`,
-          score: Math.floor(Math.random() * 10) + 1,
-          maxScore: 10,
-        });
-      }
-      return moreQuizzes;
-    },
-    initialMockQuizzes() {
-      // Generates initial mock quizzes for display on component mount
-      let initialQuizzes = [];
-      for (let i = 0; i < this.pageSize; i++) {
-        initialQuizzes.push({
-          id: i,
-          title: `Initial Quiz ${i + 1}`,
-          score: Math.floor(Math.random() * 10) + 1,
-          maxScore: 10
-        });
-      }
-      return initialQuizzes;
-    },
-    handleResize() {
-      this.isDesktop = window.innerWidth > 768;
-      if (!this.isDesktop) {
-        this.pageSize = 10;
-      }
-    },
-  },
-  mounted() {
-    this.quizzes = this.initialMockQuizzes();
-    window.addEventListener('resize', this.handleResize);
-    this.handleResize();
-  },
-  beforeUnmount() {
-    window.removeEventListener('resize', this.handleResize);
-  },
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    isCompleted: {
-      type: Boolean,
-      required: true,
-    }
-  }
+
+const pageSize = ref(window.innerWidth > 768 ? 5 : 10);
+
+// Computed properties
+const paginatedGames = computed(() => {
+  let startIndex = 0; // Change as per your pagination logic
+  return props.quizzes.slice(startIndex, startIndex + pageSize.value);
+});
+
+const findQuizTitle = (quizId) => {
+  const quiz = props.quizzes.find((quiz) => quiz.id === quizId);
+  return quiz ? quiz.title : '';
 };
+
+
+
+const navigateToQuiz = (quizId) => {
+  router.push({ name: 'QuizView', params: { id: quizId } });
+};
+
+onMounted(() => {
+  // Handle window resize for responsive design
+  const handleResize = () => {
+    pageSize.value = window.innerWidth > 768 ? 5 : 10;
+  };
+  window.addEventListener('resize', handleResize);
+  handleResize();
+
+  // Fetch data logic if needed
+});
+
 </script>
 
 <style scoped>
