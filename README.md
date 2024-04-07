@@ -27,9 +27,27 @@ npm run dev
 ## Using the application
 The application is already populated with testdata. 
 You can log in with the following credentials: 
-- Username: "test"
-- Password: "Aa12345!"
+```
+- Username: test
+- Password: Aa12345!
+```
 Once logged in, there should be a quiz ready to be played!
+
+## Accessing the database
+To log into the database, paste this URL into your browser
+```
+localhost:8080/console
+```
+Change the ```JDBC URL``` field to 
+```
+jdbc:h2:file:./data/myDB
+```
+Credentials: 
+```
+- Username: sa
+- Password: password
+```
+
 ## Other commands
 
 - ```npm run build``` Type-Check, Compile and Minify for Production
@@ -37,5 +55,7 @@ Once logged in, there should be a quiz ready to be played!
 - ```npm run test:e2e``` End to end testing
 - ```npm run lint ``` Lint with [ESLint](https://eslint.org/)
 
+## License
+Distributed under the MIT License. See LICENSE.txt for more information.
 
 
