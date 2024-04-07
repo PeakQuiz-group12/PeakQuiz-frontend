@@ -57,23 +57,23 @@
           <div class="answer-item" v-for="(editableAnswer, index) in currentQuestion.answers" :key="index"
                :style="{ backgroundColor: colors[index] }">
             <!-- Content for the Quiz option -->
-            <div v-if="currentQuestion.questionType === 'Quiz'" class="content">
-              <textarea :value="editableAnswer.text" placeholder="Enter answer option" @input="event => updateOption(event, index)" />
+            <div v-if="currentQuestion.questionType === 'MULTIPLE_CHOICE'" class="content">
+              <textarea :value="editableAnswer.answer" placeholder="Enter answer option" @input="event => updateOption(event, index)" />
               <div class="checkbox-container">
-                <input type="checkbox" :checked="editableAnswer.isCorrect" @change="event => updateOption(event, index)" />
+                <input type="checkbox" :checked="editableAnswer.isAnswer" @change="event => updateOption(event, index)" />
               </div>
             </div>
             <!-- Content for the True or False option -->
             <div v-else-if="currentQuestion.questionType=== 'True or False'" class="content">
-              <p>{{ editableAnswer.text }}</p>
-              <input type="checkbox" :checked="editableAnswer.isCorrect" @change="event => updateOption(event, index)" />
+              <p>{{ editableAnswer.answer }}</p>
+              <input type="checkbox" :checked="editableAnswer.isAnswer" @change="event => updateOption(event, index)" />
             </div>
             <!-- Content for the Input option -->
-            <div v-else-if="currentQuestion.questionType==='Input'" class="content">
+            <div v-else-if="currentQuestion.questionType==='FILL_IN_BLANK'" class="content">
               <input
                   type="text"
                   class="input-answer"
-                  :value="editableAnswer.text"
+                  :value="editableAnswer.answer"
                   placeholder="Enter correct answer"
                   @input="event => updateOption(event, index)"
               />
@@ -85,7 +85,7 @@
         </div>
 
         <button
-            v-if="currentQuestion.questionType === 'Quiz' && currentQuestion.answers.length < 4"
+            v-if="currentQuestion.questionType === 'MULTIPLE_CHOICE' && currentQuestion.answers.length < 4"
             @click="addAnswer"
         >
           Add Option
@@ -98,17 +98,8 @@
           <div class = "question-type">
             <h2>Question Type</h2>
             <select class ="option-item" v-model="currentQuestion.questionType" @change="changeOption">
-              <option>Quiz</option>
-              <option>True or False</option>
-              <option>Input</option>
-            </select>
-          </div>
-          <!-- V-if qestion type is quiz, then display answer options -->
-          <div v-if="currentQuestion.questionType === 'Quiz'" class="answer-options">
-            <h2>Answer Options</h2>
-            <select class ="option-item">
-              <option>Multiple select</option>
-              <option>Single select</option>
+              <option>MULTIPLE_CHOICE</option>
+              <option>FILL_IN_BLANK</option>
             </select>
           </div>
 
@@ -127,7 +118,7 @@
         </div>
         <div class="save-quiz">
           <div class = "under-line"></div>
-          <button class="save-quiz-btn">Save Quiz</button>
+          <button @click="createFullQuiz" class="save-quiz-btn">Save Quiz</button>
         </div>
       </div>
     </div>
@@ -136,6 +127,10 @@
 
 <script setup>
 import {defineProps, ref} from "vue";
+import { useAuth } from '@/useAuth.js'
+
+const { refreshTokenIfNeeded } = useAuth();
+
 
 const props = defineProps({
   quizFromParent: {
@@ -150,16 +145,18 @@ const currentQuestion = ref(null);
 if(!quiz.questions.length)
 {
   const defaultQuestion = {
-    id: 1,
     text: '',
+    questionType: 'MULTIPLE_CHOICE',
     media: null,
-    questionType: 'Quiz',
+    difficulty: 3,
+    explanation: 'This is a test explanation',
     answers: [
-      { text: '', isCorrect: false },
-      { text: '', isCorrect: false },
-      { text: '', isCorrect: false },
-      { text: '', isCorrect: false },
+      { answer: '', isAnswer: false },
+      { answer: '', isAnswer: false },
+      { answer: '', isAnswer: false },
+      { answer: '', isAnswer: false },
     ],
+    quizId: quiz.id
   };
   quiz.questions.push(defaultQuestion);
   currentQuestion.value = defaultQuestion;
@@ -175,19 +172,46 @@ const selectQuestion = (question) => {
 
 const addQuestion = () => {
   const newQuestion = {
-    id: quiz.questions.length + 1,
     text: '',
+    questionType: 'MULTIPLE_CHOICE',
     media: null,
-    questionType: 'Quiz',
+    difficulty: 3,
+    explanation: 'This is a test explanation',
     answers: [
-      { text: '', isCorrect: false },
-      { text: '', isCorrect: false },
-      { text: '', isCorrect: false },
-      { text: '', isCorrect: false },
+      { answer: '', isAnswer: false },
+      { answer: '', isAnswer: false },
+      { answer: '', isAnswer: false },
+      { answer: '', isAnswer: false },
     ],
+    quizId: quiz.id
   };
   quiz.questions = [...quiz.questions, newQuestion];
   currentQuestion.value = newQuestion;
+};
+
+const createFullQuiz = async () => {
+  console.log(JSON.stringify(quiz))
+  const token = await refreshTokenIfNeeded();
+  try {
+    const response = await fetch('http://localhost:8080/quizzes/' + quiz.id, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(quiz),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log("successful", result);
+      quiz.value = result
+    } else {
+      console.error(response.status);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };
 
 const removeAnswer = (index) => {
@@ -195,7 +219,7 @@ const removeAnswer = (index) => {
 };
 
 const addAnswer = () => {
-  currentQuestion.value.answers.push({ text: '', isCorrect: false });
+  currentQuestion.value.answers.push({ answer: '', isAnswer: false });
 };
 
 const isImageFile = (fileType) => {
@@ -209,59 +233,42 @@ const changeOption = (event) => {
   currentQuestion.value.questionType = newQuestionType;
 
   switch (newQuestionType) {
-    case 'Quiz':
+    case 'MULTIPLE_CHOICE':
       currentQuestion.value.answers = [
-        { text: '', isCorrect: false },
-        { text: '', isCorrect: false },
-        { text: '', isCorrect: false },
-        { text: '', isCorrect: false },
+        { answer: 'ewf', isAnswer: false },
+        { answer: 'wef', isAnswer: false },
+        { answer: 'ewf', isAnswer: false },
+        { answer: 'wef', isAnswer: false },
       ];
       break;
     case 'True or False':
       currentQuestion.value.answers = [
-        { text: 'True', isCorrect: true },
-        { text: 'False', isCorrect: false },
+        { answer: 'True', isAnswer: true },
+        { answer: 'False', isAnswer: false },
       ];
       break;
-    case 'Input':
-      currentQuestion.value.answers = [{ text: '', isCorrect: true }];
+    case 'FILL_IN_BLANK':
+      currentQuestion.value.answers = [{ answer: 'wefwf', isAnswer: true }];
       break;
     default:
       break;
   }
-
-  // Update the question in the quiz
-  const questionIndex = quiz.questions.findIndex(q => q.id === currentQuestion.value.id);
-  if (questionIndex !== -1) {
-    quiz.questions[questionIndex] = {...currentQuestion.value};
-  }
 };
 
 const updateOption = (event, index) => {
-  // Determine the field being updated (text or isCorrect)
-  const updatedField = event.target.type === 'checkbox' ? 'isCorrect' : 'text';
+  // Determine the field being updated (text or isAnswer)
+  const updatedField = event.target.type === 'checkbox' ? 'isAnswer' : 'answer';
 
   // Update the current question's answers
-  if (updatedField === 'text') {
-    currentQuestion.value.answers[index].text = event.target.value;
-  } else if (updatedField === 'isCorrect') {
-    currentQuestion.value.answers[index].isCorrect = event.target.checked;
-  }
-
-  // Update the corresponding question in the quiz
-  const questionIndex = quiz.questions.findIndex(q => q.id === currentQuestion.value.id);
-  if (questionIndex !== -1) {
-    quiz.questions[questionIndex].answers[index] = currentQuestion.value.answers[index];
+  if (updatedField === 'answer') {
+    currentQuestion.value.answers[index].answer = event.target.value;
+  } else if (updatedField === 'isAnswer') {
+    currentQuestion.value.answers[index].isAnswer = event.target.checked;
   }
 };
 
 const changeDifficulty = (event) => {
   currentQuestion.value.difficulty = event.target.value;
-  // Update the question in the quiz
-  const questionIndex = quiz.questions.findIndex(q => q.id === currentQuestion.value.id);
-  if (questionIndex !== -1) {
-    quiz.questions[questionIndex] = {...currentQuestion.value};
-  }
 };
 const resetFileInput = () => {
   currentQuestion.value.media = null;

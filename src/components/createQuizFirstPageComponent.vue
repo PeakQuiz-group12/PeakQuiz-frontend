@@ -8,17 +8,20 @@ import ArrowDownComponent from '@/components/iconComponents/arrowDownComponent.v
 const emit = defineEmits(['submitBtnClicked'])
 
 const isOpen = ref(false);
-const selectedOptions = ref([]);
+const options = ref(["Math", "History", "Music"]);
 
-// Example options list
-const options = ref(["Math", "History", "Geography", "Science", "English"]);
+const title = ref("")
+const selectedOptions = ref([]);
+const description = ref("")
+const imageUrl = ref("https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Closeup_of_pixels.JPG/220px-Closeup_of_pixels.jpg")
+
 
 function toggleDropdown() {
   isOpen.value = !isOpen.value;
 }
 
 function handleSubmit() {
-  emit('submitBtnClicked', { selectedOptions: selectedOptions.value });
+  emit('submitBtnClicked', { title: title.value, categories: selectedOptions.value, description: description.value, imageUrl: imageUrl.value});
 }
 </script>
 
@@ -32,7 +35,7 @@ function handleSubmit() {
       <div class="quiz-details">
         <div class="title">
           <p>Quiz Title</p>
-          <input class="text-input" placeholder="Quiz title">
+          <input v-model="title" class="text-input" placeholder="Quiz title">
         </div>
         <div class="dropdown">
           <button @click="toggleDropdown" class="dropdown-button">
@@ -55,11 +58,11 @@ function handleSubmit() {
         </div>
         <div class="description">
           <p>Quiz description</p>
-          <textarea placeholder="Write a description"></textarea>
+          <textarea v-model="description" placeholder="Write a description"></textarea>
         </div>
-        <div class="quiz-image">
-          <p>Upload an image</p>
-          <button class="quiz-img-btn">Add an image +</button>
+        <div class="title">
+          <p>Upload image</p>
+          <input v-model="imageUrl" class="text-input" placeholder="Image url">
         </div>
         <button @click="handleSubmit" class="submit-btn">Submit</button>
       </div>
