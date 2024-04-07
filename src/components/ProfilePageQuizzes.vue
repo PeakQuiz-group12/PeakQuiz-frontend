@@ -31,6 +31,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import CircularProgress from './CircularProgress.vue';
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const props = defineProps({
   games: {
@@ -59,10 +62,13 @@ const findQuizTitle = (quizId) => {
   return quiz ? quiz.title : '';
 };
 
-
+const findQuizMedia= (quizId) => {
+  const quiz = props.quizzes.find((quiz) => quiz.id === quizId);
+  return quiz ? quiz.imageUrl : '';
+};
 
 const navigateToQuiz = (quizId) => {
-  router.push({ name: 'QuizView', params: { id: quizId } });
+  router.push('/playQuiz/' + quizId);
 };
 
 onMounted(() => {
@@ -115,7 +121,6 @@ onMounted(() => {
   flex: 0 0 auto;
   width: 300px;
   margin: 0.5rem;
-  background: white;
   border: 8px solid #007bff;
   border-radius: 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);

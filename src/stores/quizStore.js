@@ -14,7 +14,7 @@ export const useQuizStore = defineStore('quizzes', () => {
         const { refreshTokenIfNeeded } = useAuth();
         const token = await refreshTokenIfNeeded();
         try {
-            const response = await fetch(`${backendURL}/quizzes`, {
+            const response = await fetch(`${backendURL}/quizzes?size=50`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

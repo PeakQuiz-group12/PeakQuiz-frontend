@@ -1,61 +1,41 @@
-# peakQuiz-frontend
+# PeakQuiz-frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+PeakQuiz is an educational quiz application meant for sharing and playing quizzes. It was created during the spring semester of 2024 at NTNU for the course IDATT2105. This repository serves as the frontend side of the application.
 
-## Recommended IDE Setup
+## Requirements ## 
+To run the application, you need to have the following installed:
+- npm
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Getting started
+1. Clone the repository:
+```
+git@github.com:PeakQuiz-group12/PeakQuiz-frontend.git
+```
+2. Navigate to the repository root:
+```
+cd PeakQuiz-frontend
+```
+3. Install dependencies
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+```
 npm install
 ```
-
-### Compile and Hot-Reload for Development
-
-```sh
+4. Run application
+```
 npm run dev
 ```
+## Using the application
+The application is already populated with testdata. 
+You can log in with the following credentials: 
+- Username: "test"
+- Password: "Aa12345!"
+Once logged in, there should be a quiz ready to be played!
+## Other commands
 
-### Type-Check, Compile and Minify for Production
+- ```npm run build``` Type-Check, Compile and Minify for Production
+- ```npm run test:unit``` Run unit tests
+- ```npm run test:e2e``` End to end testing
+- ```npm run lint ``` Lint with [ESLint](https://eslint.org/)
 
-```sh
-npm run build
-```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
 
-```sh
-npm run test:unit
-```
-
-### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
-
-```sh
-npm run test:e2e:dev
-```
-
-This runs the end-to-end tests against the Vite development server.
-It is much faster than the production build.
-
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
-
-```sh
-npm run build
-npm run test:e2e
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```

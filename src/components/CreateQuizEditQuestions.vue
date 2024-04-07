@@ -105,8 +105,11 @@
 </template>
 
 <script setup>
-import {defineProps, ref} from "vue";
+import { defineProps, onMounted, ref } from 'vue'
 import { useAuth } from '@/useAuth.js'
+import { useUserStore } from '@/stores/userStore.js'
+
+const userStore = useUserStore();
 
 const { refreshTokenIfNeeded } = useAuth();
 
@@ -117,6 +120,16 @@ const props = defineProps({
     required: true
   }
 });
+
+const quizFromBackend = ref()
+
+const userDTO = ref()
+
+onMounted(async () => {
+  await userStore.fetchMe()
+  userDTO.value = userStore.userDTO
+  //JSON.parse(JSON.stringify(userDTO.value))
+})
 
 const quiz = props.quizFromParent
 
@@ -168,6 +181,8 @@ const addQuestion = () => {
   currentQuestion.value = newQuestion;
 };
 
+
+
 const createFullQuiz = async () => {
   console.log(JSON.stringify(quiz))
   const token = await refreshTokenIfNeeded();
@@ -184,13 +199,20 @@ const createFullQuiz = async () => {
     if (response.ok) {
       const result = await response.json();
       console.log("successful", result);
-      quiz.value = result
+      quizFromBackend.value = result
     } else {
       console.error(response.status);
     }
   } catch (error) {
     console.error("Error:", error);
   }
+
+  const collabData = {
+    userId: userDTO.value.id,
+    quizId: quizFromBackend.value.id,
+    collaboratorType: "CREATOR"
+  }
+  await userStore.postCollab(collabData)
 };
 
 const removeAnswer = (index) => {
