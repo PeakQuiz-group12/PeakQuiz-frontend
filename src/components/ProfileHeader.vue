@@ -5,7 +5,8 @@
     </div>
     <div class="user-info">
       <div class = "user-info-username">
-        <h1>{{ userName }}</h1>
+        <h1 v-if="userName">{{ userName }}</h1>
+        <h1 v-else>No Username</h1>
         <button v-on:click="goToEditProfile" class="editProfileBtn">Edit&nbsp;Profile</button>
       </div>
 
