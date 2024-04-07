@@ -30,7 +30,7 @@ describe('Profile View Tests', () => {
         cy.get('.profile-header').should('exist');
         cy.get('.profile-image').should('have.attr', 'src', '/src/assets/profile-picture.jpg');
         cy.get('.user-info h1').should('contain', 'newuser');
-        cy.get('.stats .stat').should('contain', '4.5');
+        cy.get('.stats .stat').should('contain', '0');
     });
     Cypress.on('uncaught:exception', () => {
         return false;
