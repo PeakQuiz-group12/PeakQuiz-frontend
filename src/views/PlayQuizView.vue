@@ -1,7 +1,7 @@
 <script setup>
 import HeaderComponent from '@/components/headerComponent.vue'
 import FooterComponent from '@/components/footerComponent.vue'
-import { computed, onMounted, ref, toRaw } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import ArrowRightComponent from '@/components/iconComponents/arrowRightComponent.vue'
 import ArrowLeftComponent from '@/components/iconComponents/arrowLeftComponent.vue'
 import TimerComponent from '@/components/iconComponents/timerComponent.vue'
@@ -10,6 +10,9 @@ import CrossComponent from '@/components/iconComponents/crossComponent.vue'
 import PieChartComponent from '@/components/pieChartComponent.vue'
 import { useQuizStore } from '@/stores/quizStore.js'
 import { useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/userStore.js'
+
+const userStore = useUserStore()
 
 const store = useQuizStore()
 const route = useRoute()
@@ -17,6 +20,17 @@ const route = useRoute()
 const quiz = ref(null);
 let totalQuestions = 0
 const currentQuestion = ref(1);
+
+
+const game = {
+  gameId: null,
+  correctAnswers: 0,
+  rating: 5,
+  feedback: "",
+  playedOn: null,
+  username: userStore.username,
+  quizId: route.params.quizId
+}
 
 onMounted(async () => {
   const quizId = route.params.quizId
@@ -28,6 +42,9 @@ onMounted(async () => {
   quiz.value.questions = shuffle(quiz.value.questions);
   startTimer();
   initializeUserAnswers()
+
+  await userStore.fetchTags()
+  tags.value = userStore.tags
 })
 
 
@@ -106,10 +123,13 @@ const formattedTimer = computed(() => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 });
 
-const finishGame = () => {
+const finishGame = async () => {
   stopTimer()
   checkAnswersLowerCase()
   inGame.value = false;
+
+  game.correctAnswers = correctAnswersCount.value
+  await userStore.createGame(game)
 }
 
 const checkAnswersLowerCase = () => {
@@ -167,6 +187,37 @@ function findCorrectAnswer(answers) {
   }
   return null; // Return null if no correct answer is found
 }
+
+const tags = ref([])
+const tag = ref("")
+
+const updateTags = () => {
+  const tagToAdd = {
+    id: null,
+    title: tag.value,
+    username: userStore.username,
+    questions: []
+  };
+
+  let found = false;  // Flag to track if a matching tag is found
+
+  for (const tagF of tags.value) {
+    if (tagF.title === tag.value) {
+      found = true;
+
+      tagF.questions.push(quiz.value.questions[currentQuestion.value - 1])
+      console.log(tagF)
+      userStore.updateTag(tagF);
+      break;  // Stop once you find and update the tag
+    }
+  }
+
+  if (!found) {
+    // If no matching tag is found, create a new tag
+    tagToAdd.questions.push(quiz.value.questions[currentQuestion.value - 1]);
+    userStore.createTag(tagToAdd);
+  }
+};
 </script>
 
 <template>
@@ -177,7 +228,11 @@ function findCorrectAnswer(answers) {
         <p class="timer">
           <timer-component></timer-component>{{ formattedTimer }}
         </p>
-        <button @click="finishGame">Give up</button>
+        <div>
+          <input class="tag-input" v-model="tag" placeholder="Tag for question">
+          <button class="add-tag-btn" @click="updateTags">Add tag</button>
+        </div>
+        <button class="give-up-btn" @click="finishGame">Give up</button>
       </div>
       <div class="summary" v-if="!inGame">
         <h1>{{ quiz.quizTitle }}</h1>
@@ -285,10 +340,18 @@ function findCorrectAnswer(answers) {
   height: 50px;
   color: white;
   font-size: 20px;
-  background-color: #d20606;
   border-radius: 5px;
   border: solid 2px black;
   cursor: pointer;
+}
+
+.add-tag-btn {
+  margin-left: 5px;
+  background-color: green;
+}
+
+.give-up-btn {
+  background-color: #d20606;
 }
 
 .summary {
@@ -468,6 +531,17 @@ h1 {
   height: 50px;
   font-size: 20px;
   margin-bottom: 30px;
+  border-radius: 5px;
+  border: solid 2px black;
+  box-sizing: border-box;
+  background-color: #f0f0f0;
+  padding-left: 10px;
+}
+
+.tag-input {
+  width: 60%;
+  height: 50px;
+  font-size: 20px;
   border-radius: 5px;
   border: solid 2px black;
   box-sizing: border-box;
