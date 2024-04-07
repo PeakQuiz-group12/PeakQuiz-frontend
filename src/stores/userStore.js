@@ -1,6 +1,6 @@
 // store/myApiStore.js
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, toRaw } from 'vue'
 import { useAuth } from '@/useAuth.js';
 
 
@@ -10,6 +10,7 @@ export const useUserStore = defineStore('user', () => {
     const tags = ref([]);
     const quizzes = ref([]);
     const username = ref(sessionStorage.getItem('username'));
+    const userDTO = ref()
     const backendURL = 'http://localhost:8080';
 
 
@@ -50,6 +51,21 @@ export const useUserStore = defineStore('user', () => {
                 },
             });
             tags.value = await response.json();
+        } catch (error) {
+            console.error('Error fetching tags:', error);
+        }
+    };
+
+    const fetchMe = async () => {
+        const token = await useAuth().refreshTokenIfNeeded();
+        try {
+            const response = await fetch(`${backendURL}/users/me`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token || '',
+                },
+            });
+            userDTO.value = await toRaw(response.json());
         } catch (error) {
             console.error('Error fetching tags:', error);
         }
@@ -97,6 +113,29 @@ export const useUserStore = defineStore('user', () => {
             console.error('Error creating game:', error);
         }
     };
+
+    const postCollab = async (collabData) => {
+        const token = await useAuth().refreshTokenIfNeeded();
+        try {
+            const response = await fetch(`${backendURL}/users/me/collaborations`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                },
+                body: JSON.stringify(collabData),
+            });
+            if (response.ok) {
+                const newGame = await response.json();
+                games.value.push(newGame);
+            } else {
+                console.error('Error creating game');
+            }
+        } catch (error) {
+            console.error('Error creating game:', error);
+        }
+    };
+
 
     /**
      * Creates a tag for a user.
@@ -153,5 +192,5 @@ export const useUserStore = defineStore('user', () => {
         }
     };
 
-    return { games, tags, quizzes, username, fetchGames, fetchTags, fetchPlayedQuizzes, createGame, createTag, updateTag };
+    return { userDTO, games, tags, quizzes, username, fetchGames, fetchTags, fetchPlayedQuizzes, createGame, createTag, updateTag, fetchMe, postCollab};
 });

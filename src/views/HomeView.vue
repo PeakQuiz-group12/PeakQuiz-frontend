@@ -30,9 +30,6 @@ onMounted(async () => {
     </div>
     <div class="quizzes">
       <quiz-row-component :row-name="'Recent'" :quiz-map="quizMap"></quiz-row-component>
-      <quiz-row-component :row-name="'Popular'" :quiz-map="quizMap"></quiz-row-component>
-      <quiz-row-component :row-name="'History'" :quiz-map="quizMap"></quiz-row-component>
-      <quiz-row-component :row-name="'Geography'" :quiz-map="quizMap"></quiz-row-component>
     </div>
   </div>
   <footer-component></footer-component>
