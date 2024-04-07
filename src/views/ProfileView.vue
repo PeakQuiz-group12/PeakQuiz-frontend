@@ -26,7 +26,7 @@ import ProfilePageQuizzes from '@/components/ProfilePageQuizzes.vue'
 import FooterComponent from '@/components/footerComponent.vue'
 import ProfileRating from '@/components/ProfileRating.vue'
 import { ref, onMounted } from "vue";
-import { userStore } from '@/stores/userStore.ts'
+import { userStore } from '@/stores/userStore.js'
 
 const user = userStore();
 
