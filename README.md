@@ -27,8 +27,10 @@ npm run dev
 ## Using the application
 The application is already populated with testdata. 
 You can log in with the following credentials: 
-- Username: "test"
-- Password: "Aa12345!"
+```
+- Username: test
+- Password: Aa12345!
+```
 Once logged in, there should be a quiz ready to be played!
 ## Other commands
 
@@ -36,6 +38,10 @@ Once logged in, there should be a quiz ready to be played!
 - ```npm run test:unit``` Run unit tests
 - ```npm run test:e2e``` End to end testing
 - ```npm run lint ``` Lint with [ESLint](https://eslint.org/)
+## License
+Distributed under the MIT License. See ```LICENSE.txt``` for more information.
+
+
 
 
 
