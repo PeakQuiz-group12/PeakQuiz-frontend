@@ -22,12 +22,10 @@ describe('Profile View Tests', () => {
         cy.get('.profile-img').click();
         cy.get('.profileView-container').should('exist');
         cy.get('.profile-header').should('exist');
-        cy.get('.profile-image').should('have.attr', 'src', '/src/assets/profile-picture.jpg');
+        cy.get('.profile-img').should('have.attr', 'src', '/src/assets/profile-picture.jpg');
         cy.get('.user-info h1').should('contain', 'newUser');
         cy.get('.stats .stat').should('contain', '0');
     });
-    Cypress.on('uncaught:exception', () => {
-        return false;
-    });
+
     // Additional tests to cover all components and functionalities
 });

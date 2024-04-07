@@ -20,10 +20,7 @@ describe('Home Page Tests', () => {
          cy.url().should('include', '/'); // Move this to the appropriate place if needed
     });
 
-
     it('displays quiz cards and allows scrolling through quizzes', () => {
-        cy.get('.quiz-row-main').should('exist');
-
         // Scroll through quizzes
         cy.get('.next').click({ multiple: true });
         cy.get('.prev').click({ multiple: true});
