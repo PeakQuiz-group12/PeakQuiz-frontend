@@ -212,9 +212,6 @@ const createFullQuiz = async () => {
     quizId: quizFromBackend.value.id,
     collaboratorType: "CREATOR"
   }
-
-  console.log(collabData)
-
   await userStore.postCollab(collabData)
 };
 
