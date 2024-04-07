@@ -1,31 +1,43 @@
+// quizStore.js
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useAuth } from '@/useAuth.js';
 
-export const quizStore = defineStore('quizzes', () => {
+export const useQuizStore = defineStore('quizzes', () => {
     const quizzes = ref([]);
     const quiz = ref({});
     const games = ref([]);
     const backendURL = 'http://localhost:8080';
 
-    // Fetch all quizzes
-    const fetchQuizzes = async () => {
+    // Make sure refreshTokenIfNeeded is called inside each method needing it
+    async function fetchQuizzes() {
+        const { refreshTokenIfNeeded } = useAuth();
+        const token = await refreshTokenIfNeeded();
         try {
             const response = await fetch(`${backendURL}/quizzes`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
             });
             quizzes.value = await response.json();
         } catch (error) {
             console.error('Error fetching quizzes:', error);
         }
-    };
+    }
 
     // Fetch a single quiz by ID
     const fetchQuiz = async (quizId) => {
+        const { refreshTokenIfNeeded } = useAuth();
+        const token = await refreshTokenIfNeeded();
         try {
             const response = await fetch(`${backendURL}/quizzes/${quizId}`, {
                 method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
             });
             quiz.value = await response.json();
         } catch (error) {

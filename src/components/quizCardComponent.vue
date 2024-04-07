@@ -1,23 +1,24 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-const { quizName, imageUrl } = defineProps(["quizName", "imageUrl"])
+const { quiz } = defineProps(["quiz"])
 const router = useRouter()
 
 const navigateToPlayQuiz = () => {
-  router.push('/playQuiz');
+  router.push('/playQuiz/' + quiz.id);
 };
 </script>
 
 <template>
   <div class="quiz-card-main" @click="navigateToPlayQuiz">
-    <img :src="imageUrl" alt="quiz image">
-    <h2>{{ quizName }}</h2>
+    <img :src="quiz.imageUrl" alt="quiz image">
+    <h2>{{ quiz.title }}</h2>
   </div>
 </template>
 
 <style scoped>
 .quiz-card-main {
+  min-width: 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,7 +35,8 @@ const navigateToPlayQuiz = () => {
 }
 
 .quiz-card-main img {
-  width: 200px;
+  max-width: 200px;
+  max-height: 200px;
   margin: 20px;
   border-radius: 5px;
 }
