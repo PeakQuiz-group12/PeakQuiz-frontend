@@ -11,7 +11,7 @@
             <div class="quiz-title-container">
               <h3>{{ findQuizTitle(game.quizId) }}</h3>
             </div>
-            <CircularProgress :score="game.correctAnswers" :max-score=10></CircularProgress>
+            <CircularProgress :score="game.correctAnswers" :max-score=findQuizQuestionCount(game.quizId)></CircularProgress>
           </div>
         </div>
       </div>
@@ -62,9 +62,9 @@ const findQuizTitle = (quizId) => {
   return quiz ? quiz.title : '';
 };
 
-const findQuizMedia= (quizId) => {
+const findQuizQuestionCount= (quizId) => {
   const quiz = props.quizzes.find((quiz) => quiz.id === quizId);
-  return quiz ? quiz.imageUrl : '';
+  return quiz ? quiz.questions.length : '';
 };
 
 const navigateToQuiz = (quizId) => {
