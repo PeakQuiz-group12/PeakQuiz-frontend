@@ -12,8 +12,9 @@
       </div>
 
 
-      <div class ="add-question">
+      <div class ="add-question-or-remove-question">
         <button class="add-button" @click="addQuestion">Add Question</button>
+        <button class="remove-button" @click="removeQuestion">Remove Question</button>
       </div>
     </div>
     <div class ="editor-options-container">
@@ -249,6 +250,16 @@ const addQuestion = () => {
   currentQuestion.value = newQuestion;
 };
 
+const removeQuestion = () => {
+  if (quiz.questions.length > 1) {
+    const index = quiz.questions.indexOf(currentQuestion.value);
+    quiz.questions.splice(index, 1);
+    currentQuestion.value = quiz.questions[0];
+  } else {
+    alert("Cannot remove the last question.");
+  }
+};
+
 
 
 const createFullQuiz = async () => {
@@ -403,8 +414,11 @@ const changeDifficulty = (event) => {
   word-wrap: break-word; /* This ensures long words do not overflow */
 }
 
-.add-question {
+.add-question-or-remove-question {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
   margin-top: auto;
   margin-bottom: 20px;
   width: 100%;
@@ -414,7 +428,8 @@ const changeDifficulty = (event) => {
 
 .add-button {
   flex: 1; /* This ensures both buttons take equal space */
-  padding: 10px;
+  box-sizing: border-box;
+  padding: 8px;
   border-radius: 4px;
   cursor: pointer;
   height: 40px;
@@ -422,6 +437,18 @@ const changeDifficulty = (event) => {
   color: white;
   border: none; /* Optional: for styling */
 }
+.remove-button {
+  flex: 1; /* This ensures both buttons take equal space */
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 40px;
+  background-color: darkred; /* Background for remove button */
+  color: white;
+  border: none; /* Optional: for styling */
+}
+
 .editor-options-container {
   display: flex;
   flex: 6;
@@ -754,9 +781,6 @@ input[type="radio"]:checked + .difficulty-scale {
   .add-button {
     width: 100px; /* Adjust button width */
 
-  }
-  .add-question {
-    margin: 0 auto; /* Center the button */
   }
   /* Container for both question editor and options */
   .editor-options-container {
