@@ -9,7 +9,7 @@ To run the application, you need to have the following installed:
 ## Getting started
 1. Clone the repository:
 ```
-git@github.com:PeakQuiz-group12/PeakQuiz-frontend.git
+git clone git@github.com:PeakQuiz-group12/PeakQuiz-frontend.git
 ```
 2. Navigate to the repository root:
 ```
