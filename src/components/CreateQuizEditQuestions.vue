@@ -119,8 +119,10 @@ import {useAuth} from '@/useAuth.js'
 import {useUserStore} from '@/stores/userStore.js'
 import HeaderComponent from "@/components/headerComponent.vue";
 import FooterComponent from "@/components/footerComponent.vue";
+import {useRouter} from "vue-router";
 
 const userStore = useUserStore();
+const router = useRouter();
 
 const { refreshTokenIfNeeded } = useAuth();
 
@@ -278,6 +280,7 @@ const createFullQuiz = async () => {
     if (response.ok) {
       quizFromBackend.value = await response.json()
       alert("Quiz saved successfully.")
+      await router.push("/")
     } else {
       alert("Failed to save quiz. Please try again.");
       console.error(response.status);
