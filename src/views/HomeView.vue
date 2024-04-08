@@ -9,13 +9,35 @@ import { useQuizStore } from '@/stores/quizStore.js'
 
 const store = useQuizStore()
 
-
 const quizMap = ref(null)
+
+const historyQuizMap = ref([])
+const mathQuizMap = ref([])
+const musicQuizMap = ref([])
 
 onMounted(async () => {
   await store.fetchQuizzes()
   quizMap.value = store.quizzes.content
+  sortByCategory()
 })
+
+
+const sortByCategory = () => {
+  for (const quiz of quizMap.value) {
+    console.log(quiz.categories)
+    for (const category of quiz.categories) {
+      if (category === 'History') {
+        historyQuizMap.value.push(quiz)
+      }
+      if (category === 'Music') {
+        musicQuizMap.value.push(quiz)
+      }
+      if (category === 'Math') {
+        mathQuizMap.value.push(quiz)
+      }
+    }
+  }
+}
 </script>
 
 <template>
@@ -30,6 +52,9 @@ onMounted(async () => {
     </div>
     <div class="quizzes">
       <quiz-row-component :row-name="'Recent'" :quiz-map="quizMap"></quiz-row-component>
+      <quiz-row-component v-if="historyQuizMap.length > 0" :row-name="'History'" :quiz-map="historyQuizMap"></quiz-row-component>
+      <quiz-row-component v-if="mathQuizMap.length > 0" :row-name="'Math'" :quiz-map="mathQuizMap"></quiz-row-component>
+      <quiz-row-component v-if="musicQuizMap.length > 0" :row-name="'Music'" :quiz-map="musicQuizMap"></quiz-row-component>
     </div>
   </div>
   <footer-component></footer-component>
