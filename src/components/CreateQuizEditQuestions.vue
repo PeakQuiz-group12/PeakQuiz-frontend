@@ -175,15 +175,8 @@ const validateInputQuText = () => {
 
 
 const validateInputImageUrl = () => {
-  const url = currentQuestion.value?.media || "";
-  // Allow empty URL or match the pattern
-  if (url === "") {
-    isImageUrlValid.value = true;
-    updateErrImageUrl.value = "";
-  } else {
-    const urlPattern = /^https?:\/\/.*\.(jpg|jpeg|png|gif)$/i;
-    isImageUrlValid.value = urlPattern.test(url);
-    updateErrImageUrl.value = isImageUrlValid.value ? "" : "Invalid image URL. Must be a jpg, jpeg, png, or gif file and start with http or https.";
+  if (currentQuestion.value.media === "") {
+    currentQuestion.value.media = null
   }
 };
 
@@ -194,6 +187,7 @@ watch(() => currentQuestion.value?.media, validateInputImageUrl);
 watch(() => currentQuestion.value?.answers, validateInputAnsText, { deep: true });
 
 const submitForm = async () => {
+
   validateInputAnsText();
   validateInputQuText();
   validateInputImageUrl();
