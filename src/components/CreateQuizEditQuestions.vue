@@ -1,6 +1,4 @@
 <template>
-  <header-component></header-component>
-  <div class="quiz-editor-container">
   <div class="quiz-editor">
     <!-- Question list -->
     <div class="question-list">
@@ -12,36 +10,28 @@
       </div>
 
 
-      <div class ="add-question-or-remove-question">
+      <div class ="add-question">
         <button class="add-button" @click="addQuestion">Add Question</button>
-        <button class="remove-button" @click="removeQuestion">Remove Question</button>
       </div>
     </div>
     <div class ="editor-options-container">
       <!-- question editor -->
       <div class="question-editor">
-        <div class="question-input-wrapper">
-          <p>Question text</p>
-          <input
-              class="questionText"
-              type="text"
-              placeholder="Enter question text"
-              v-model="currentQuestion.text"
-          />
-          <span v-if="updateErrQuText" class="error-message">
-            {{ updateErrQuText }}
-          </span>
-          <p class="question-image-url-p">Question image url</p>
-          <input
-            class="questionText-url"
+        <p>Question text</p>
+        <input
+            class="questionText"
             type="text"
-            placeholder="Enter question image url"
-            v-model="currentQuestion.media"
-          />
-          <span v-if="updateErrImageUrl" class="error-message">
-            {{ updateErrImageUrl }}
-          </span>
-        </div>
+            placeholder="Enter question text"
+            v-model="currentQuestion.text"
+        />
+        <p class="question-image-url-p">Question image url</p>
+        <input
+          class="questionText"
+          type="text"
+          placeholder="Enter question image url"
+          v-model="currentQuestion.media"
+        />
+
         <div v-if="currentQuestion && currentQuestion.answers" class="answer-container">
           <div class="answer-item" v-for="(editableAnswer, index) in currentQuestion.answers" :key="index"
                :style="{ backgroundColor: colors[index] }">
@@ -51,6 +41,11 @@
               <div class="checkbox-container">
                 <input type="checkbox" :checked="editableAnswer.isAnswer" @change="event => updateOption(event, index)" />
               </div>
+            </div>
+            <!-- Content for the True or False option -->
+            <div v-else-if="currentQuestion.questionType=== 'True or False'" class="content">
+              <p>{{ editableAnswer.answer }}</p>
+              <input type="checkbox" :checked="editableAnswer.isAnswer" @change="event => updateOption(event, index)" />
             </div>
             <!-- Content for the Input option -->
             <div v-else-if="currentQuestion.questionType==='FILL_IN_BLANK'" class="content">
@@ -62,12 +57,10 @@
                   @input="event => updateOption(event, index)"
               />
             </div>
-
             <button v-if="currentQuestion.answers>2" class="remove-button-answer-option" @click="removeAnswer">
               X
             </button>
           </div>
-          <span v-if="updateErrAnsText" class="error-message">{{updateErrAnsText}}</span>
         </div>
 
         <button
@@ -104,25 +97,19 @@
         </div>
         <div class="save-quiz">
           <div class = "under-line"></div>
-          <button @click="submitForm" class="save-quiz-btn">Save Quiz</button>
+          <button @click="createFullQuiz" class="save-quiz-btn">Save Quiz</button>
         </div>
       </div>
     </div>
   </div>
-  </div>
-  <footer-component></footer-component>
 </template>
 
 <script setup>
-import {defineProps, onMounted, ref, watch} from 'vue'
-import {useAuth} from '@/useAuth.js'
-import {useUserStore} from '@/stores/userStore.js'
-import HeaderComponent from "@/components/headerComponent.vue";
-import FooterComponent from "@/components/footerComponent.vue";
-import {useRouter} from "vue-router";
+import { defineProps, onMounted, ref } from 'vue'
+import { useAuth } from '@/useAuth.js'
+import { useUserStore } from '@/stores/userStore.js'
 
 const userStore = useUserStore();
-const router = useRouter();
 
 const { refreshTokenIfNeeded } = useAuth();
 
@@ -137,8 +124,6 @@ const props = defineProps({
 const quizFromBackend = ref()
 
 const userDTO = ref()
-const quiz = props.quizFromParent
-const currentQuestion = ref(null);
 
 onMounted(async () => {
   await userStore.fetchMe()
@@ -146,65 +131,9 @@ onMounted(async () => {
   //JSON.parse(JSON.stringify(userDTO.value))
 })
 
-const isAnswerTextValid = ref(true);
-const isQuestionTextValid = ref(true);
-const isImageUrlValid = ref(true);
+const quiz = props.quizFromParent
 
-const updateErrAnsText = ref("");
-const updateErrQuText = ref("");
-const updateErrImageUrl = ref("");
-
-
-const validateInputAnsText = () => {
-  if (currentQuestion.value?.answers) {
-    // Check if any answer text exceeds the character limit
-    isAnswerTextValid.value = currentQuestion.value.answers.every(
-        answer => answer.answer.length <= 100
-    );
-  } else {
-    isAnswerTextValid.value = true; // No answers to validate
-  }
-  updateErrAnsText.value = isAnswerTextValid.value ? "" : "Answer text can not be longer than 100 characters.";
-};
-
-const validateInputQuText = () => {
-  const text = currentQuestion.value?.text || "";
-  isQuestionTextValid.value = text.length <= 100;
-  updateErrQuText.value = isQuestionTextValid.value ? "" : "Question text can not be longer than 100 characters.";
-};
-
-
-const validateInputImageUrl = () => {
-  const url = currentQuestion.value?.media || "";
-  // Allow empty URL or match the pattern
-  if (url === "") {
-    isImageUrlValid.value = true;
-    updateErrImageUrl.value = "";
-  } else {
-    const urlPattern = /^https?:\/\/.*\.(jpg|jpeg|png|gif)$/i;
-    isImageUrlValid.value = urlPattern.test(url);
-    updateErrImageUrl.value = isImageUrlValid.value ? "" : "Invalid image URL. Must be a jpg, jpeg, png, or gif file and start with http or https.";
-  }
-};
-
-
-
-watch(() => currentQuestion.value?.text, validateInputQuText);
-watch(() => currentQuestion.value?.media, validateInputImageUrl);
-watch(() => currentQuestion.value?.answers, validateInputAnsText, { deep: true });
-
-const submitForm = async () => {
-  validateInputAnsText();
-  validateInputQuText();
-  validateInputImageUrl();
-
-  if (isAnswerTextValid.value && isQuestionTextValid.value && isImageUrlValid.value) {
-    await createFullQuiz();
-  } else {
-    alert("Please fix the errors in the form before submitting.");
-  }
-};
-
+const currentQuestion = ref(null);
 if(!quiz.questions.length)
 {
   const defaultQuestion = {
@@ -252,16 +181,6 @@ const addQuestion = () => {
   currentQuestion.value = newQuestion;
 };
 
-const removeQuestion = () => {
-  if (quiz.questions.length > 1) {
-    const index = quiz.questions.indexOf(currentQuestion.value);
-    quiz.questions.splice(index, 1);
-    currentQuestion.value = quiz.questions[0];
-  } else {
-    alert("Cannot remove the last question.");
-  }
-};
-
 
 
 const createFullQuiz = async () => {
@@ -278,15 +197,13 @@ const createFullQuiz = async () => {
     });
 
     if (response.ok) {
-      quizFromBackend.value = await response.json()
-      alert("Quiz saved successfully.")
-      await router.push("/")
+      const result = await response.json();
+      console.log("successful", result);
+      quizFromBackend.value = result
     } else {
-      alert("Failed to save quiz. Please try again.");
       console.error(response.status);
     }
   } catch (error) {
-    alert("Failed to save quiz. Please try again.")
     console.error("Error:", error);
   }
 
@@ -306,6 +223,12 @@ const addAnswer = () => {
   currentQuestion.value.answers.push({ answer: '', isAnswer: false });
 };
 
+const isImageFile = (fileType) => {
+  return fileType.includes('image');
+};
+const isVideoFile = (fileType) => {
+  return fileType.includes('video');
+};
 const changeOption = (event) => {
   const newQuestionType = event.target.value;
   currentQuestion.value.questionType = newQuestionType;
@@ -348,36 +271,34 @@ const updateOption = (event, index) => {
 const changeDifficulty = (event) => {
   currentQuestion.value.difficulty = event.target.value;
 };
-
+const resetFileInput = () => {
+  currentQuestion.value.media = null;
+};
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  const fileUrl = URL.createObjectURL(file);
+  currentQuestion.value.media = {
+    url: fileUrl,
+    type: file.type,
+  };
+};
 
 
 
 </script>
 
-
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-.quiz-editor-container {
-  height: 600px;
-  width: 100%;
-
-}
 .quiz-editor {
-  max-height: 600px;
+  max-height: 700px;
   height: 100%;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
-}
-.error-message {
-  color: red;
-  font-size: 0.8rem;
-  margin-top: 5px;
 }
 
 /* Question list */
@@ -388,15 +309,12 @@ const changeDifficulty = (event) => {
   flex-direction: column;
   width: 100%;
   flex: 2;
-  border: 1px solid #ccc;
-  border-radius: 5px;
   overflow-y: auto;
   overflow-x: hidden;
 }
 .questions
 {
-  margin-bottom: auto;
-  width: 100%;
+  width: 85%;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -405,34 +323,30 @@ const changeDifficulty = (event) => {
 .question-item {
   box-sizing: border-box;
   width: 100%;
+  min-height: 100px;
   overflow: hidden;
   max-height: 200px; /* Adjust based on your requirement */
-  height: 100%;
-  min-height: 100px;
   margin-bottom: 0.5rem;
   background-color: #2c3e50;
   color: white;
-  padding: 8px;
   border: 4px solid orange;
   word-wrap: break-word; /* This ensures long words do not overflow */
 }
 
-.add-question-or-remove-question {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 10px;
+.add-question {
   margin-top: auto;
   margin-bottom: 20px;
-  width: 100%;
-  max-width: 300px;
+  margin-left: 10px;
+  width: 80%;
+  max-width: 200px;
   min-width: 50px;
+
+  display: flex;
 }
 
 .add-button {
   flex: 1; /* This ensures both buttons take equal space */
-  box-sizing: border-box;
-  padding: 8px;
+  padding: 10px;
   border-radius: 4px;
   cursor: pointer;
   height: 40px;
@@ -440,41 +354,50 @@ const changeDifficulty = (event) => {
   color: white;
   border: none; /* Optional: for styling */
 }
-.remove-button {
-  flex: 1; /* This ensures both buttons take equal space */
-  box-sizing: border-box;
-  padding: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  height: 40px;
-  background-color: darkred; /* Background for remove button */
-  color: white;
-  border: none; /* Optional: for styling */
-}
-
 .editor-options-container {
   display: flex;
   flex: 6;
   flex-direction: row;
-  height: 100%;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: lightslategray;
 }
 
 
 .questionText {
   width: 100%;
   height: 50px;
+  margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
   box-sizing: border-box;
 }
-
+.uploaded-file-display {
+  margin: 10px 0;
+}
 .uploaded-file-display img, .uploaded-file-display video {
   width: 100%;
   height: auto;
 }
+.remove-file-button {
+  height: 40px;
+  width: 50%;
+  padding: 10px;
+  background-color: #0077C0;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
 
+.upload-text {
+  color: #555;
+  font-size: 20px;
+  font-weight: bold;
+}
 .answer-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -486,12 +409,8 @@ const changeDifficulty = (event) => {
 }
 .answer-item {
   width: 90%;
-  min-width: 100px;
-  height: 100%;
-  max-height: 70px;
-  min-height: 40px;
+  height: 70px;
   display: flex;
-  margin-right: 0.2rem;
   padding: 5px;
   border-radius: 5px;
   cursor: pointer;
@@ -521,7 +440,9 @@ textarea{
   box-sizing: border-box;
 }
 
-
+.answer-options {
+  margin-top: 20px;
+}
 .option-item {
   width: 100%;
   height: 50px;
@@ -539,42 +460,17 @@ textarea{
   justify-content: center;
   align-items: center;
   padding: 20px;
+  border: 1px solid #ccc;
   margin-right: 5rem;
   border-radius: 5px;
+  background-color: lightslategray;
 }
-.question-input-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: auto ;
-  flex: 1;
-  width: 100%;
-  height: 100%;
-  max-height: 200px;
-  min-height: 100px;
-}
-.questionText, .questionText-url {
-  width: 80%; /* Full width of the parent container */
-  max-width: 600px; /* Maximum width of the input field */
-  height: 50px;
-  margin-top: 0.2rem;
-  margin-bottom: auto;
-
-  border-radius: 5px;
-  border: solid 2px black;
-  padding-left: 10px; /* Add padding inside the input for text */
-  box-sizing: border-box;
-  background-color: #f0f0f0;
-}
-.questionText, .questionText-url {
+.questionText {
   flex-shrink: 0; /* Prevents the input from shrinking */
   width: 80%; /* Full width of the parent container */
   max-width: 600px; /* Maximum width of the input field */
   height: 50px;
-  margin-top: 0.2rem;
-  margin-bottom: auto;
-
+  margin: auto 80px auto 80px;/* Center the input horizontally and add margin */
   border-radius: 5px;
   border: solid 2px black;
   padding-left: 10px; /* Add padding inside the input for text */
@@ -583,7 +479,7 @@ textarea{
 }
 
 .answer-container {
-  flex: 1;
+  flex-shrink: 0;
   width: 100%;
   max-width: 600px;
   min-width: 200px;
@@ -592,7 +488,6 @@ textarea{
   min-height: 20px;
   padding: 40px;
   display: grid;
-  margin-bottom: 4rem;
   grid-template-columns: repeat(2, 1fr); /* Two columns, each taking half of the container width */
   grid-auto-rows: minmax(100px, auto); /* Minimum row height, but can grow if content is larger */
   gap: 0; /* Space between grid items */
@@ -600,6 +495,61 @@ textarea{
   align-items: start; /* Align grid items to the start of the grid area vertically */
 }
 
+
+/*FileUploader component*/
+.upload-file-container {
+  flex-shrink: 0;
+  height: 100%;
+  max-height: 200px;
+  min-height: 100px;
+  border: 6px solid #0077C0;
+  border-radius: 5px;
+  background: white;
+  width: 100%;
+  max-width: 200px;
+  min-width: 100px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.file-upload-label {
+  display: block;
+}
+.upload-icon-border {
+  margin: 20px auto 20px auto;
+  background-color: #2c3e50;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.upload-icon {
+  color: white;
+  font-size: 36px; /* Adjust size as needed */
+}
+
+.upload-text {
+  color: #555;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Hide the actual file input */
+#file-upload {
+  display: none;
+}
+.uploaded-file-display {
+  width: 100%;  /* Set to desired width of the container */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center the media horizontally */
+  align-items: center;     /* Center the media vertically */
+  overflow: hidden;        /* Clip excess media */
+  margin-top: 20px;        /* Spacing from the top */
+  margin-bottom: 0.5rem;   /* Spacing from the bottom */
+}
 
 .uploaded-file-display img,
 .uploaded-file-display video {
@@ -616,6 +566,17 @@ textarea{
 .answer-item input[type="checkbox"] {
   margin-left: 10px;
 }
+.input-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+
+
 
 .input-wrapper textarea {
   /* Styles to match the input */
@@ -634,6 +595,9 @@ textarea{
   flex-shrink: 0; /* Prevent the checkbox container from shrinking */
 }
 
+.input-wrapper {
+  margin-left: 0.5rem;
+}
 
 /* Custom checkbox styles */
 .checkbox-container input[type="checkbox"] {
@@ -682,6 +646,7 @@ textarea{
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  background-color: lightslategray;
 }
 
 /*Difficulty rating*/
@@ -754,8 +719,7 @@ input[type="radio"]:checked + .difficulty-scale {
   }
 
   .question-list {
-    border: 1px solid #ccc;
-    border-radius: 5px;
+
     flex: 1; /* Takes up 1/4 of the parent height */
     width: 100%; /* Full width */
     overflow-y: hidden; /* Disable vertical scrolling */
@@ -767,7 +731,6 @@ input[type="radio"]:checked + .difficulty-scale {
     box-sizing: border-box;
     display: flex;
     max-height: 200px;
-    margin-bottom: 0.5rem;
     height: 100%;
     flex-direction: row; /* Change flex direction for horizontal layout */
     width: 100%;
@@ -776,14 +739,18 @@ input[type="radio"]:checked + .difficulty-scale {
     width: 100%; /* Ensure each question takes full width of the container */
     max-width: 200px;
     min-width: 100px;
-    min-height: 60px;
+    min-height: 100px;
     height: 100%;
     max-height: 200px;
     margin-right: 0.5rem; /* Space between questions */
+    margin-bottom: 0.5rem;
   }
   .add-button {
     width: 100px; /* Adjust button width */
 
+  }
+  .add-question {
+    margin: 0 auto; /* Center the button */
   }
   /* Container for both question editor and options */
   .editor-options-container {
@@ -793,12 +760,6 @@ input[type="radio"]:checked + .difficulty-scale {
 
   .question-editor {
     flex: 2; /* 2/3 of the width */
-  }
-  .content {
-    height: 100%;
-    width: 100%;
-    max-height: 200px;
-    max-width: 300px;
   }
 
   .options {
