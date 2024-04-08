@@ -2,40 +2,23 @@
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import SearchIcon from '@/components/iconComponents/searchIcon.vue'
 import { useRouter } from 'vue-router'
+import { useQuizStore } from '@/stores/quizStore.js'
+
+const quizStore = useQuizStore();
 
 const router = useRouter();
 const searchQuery = ref("");
 const searchResults = ref([]);
 const searchContainer = ref(null);  // Reference to the search container
 
-const exampleSearchData = [
-  "History Quiz",
-  "Math Test",
-  "Science Quiz",
-  "Technology News",
-  "Math Homework",
-  "World Geography Quiz",
-  "Physics Exam",
-  "Chemistry Lab",
-  "Programming Challenge",
-  "Biology Fieldwork",
-  "English Literature Essay",
-  "Art History Review",
-  "Digital Media Analysis",
-  "Environmental Science Project",
-  "Statistics Case Study",
-  "Computer Science Algorithms",
-  "Economic Theories",
-  "Ancient Civilizations",
-  "Modern History Debates",
-  "Music Theory Exam"
-];
-
-watch(searchQuery, () => {
+watch(searchQuery, async () => {
   if (searchQuery.value) {
-    searchResults.value = exampleSearchData
-      .filter(item => item.toLowerCase().includes(searchQuery.value.toLowerCase()))
-      .slice(0, 5);
+    await quizStore.fetchSearchQuizzes(searchQuery.value)
+
+
+    searchResults.value = quizStore.searchQuizzes.content
+    console.log(searchResults.value)
+
   } else {
     searchResults.value = [];
   }
@@ -66,6 +49,10 @@ const navigateToProfile = () => {
 const navigateToCreateQuiz = () => {
   router.push('/createQuiz');
 };
+
+const navigateToPlayQuiz = (id) => {
+  router.push('/playQuiz/' + id);
+};
 </script>
 
 <template>
@@ -74,12 +61,12 @@ const navigateToCreateQuiz = () => {
     <div class="search-container" ref="searchContainer"> <!-- Bind the ref here -->
       <div class="search-bar">
         <input class="search-input" type="search" placeholder="Search..." v-model="searchQuery">
-        <button class="search-btn" @click="search">
+        <button class="search-btn">
           <SearchIcon class="search-icon"/>
         </button>
       </div>
       <ul v-if="searchResults.length" class="search-result-list">
-        <li v-for="result in searchResults" :key="result">{{ result }}</li>
+        <li v-for="result in searchResults" :key="result" @click="navigateToPlayQuiz(result.id)" >{{ result.title }}</li>
       </ul>
     </div>
     <div class="btn-and-profile">

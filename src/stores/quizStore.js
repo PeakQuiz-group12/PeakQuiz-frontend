@@ -5,6 +5,7 @@ import { useAuth } from '@/useAuth.js';
 
 export const useQuizStore = defineStore('quizzes', () => {
     const quizzes = ref([]);
+    const searchQuizzes = ref([])
     const quiz = ref({});
     const games = ref([]);
     const backendURL = 'http://localhost:8080';
@@ -22,6 +23,24 @@ export const useQuizStore = defineStore('quizzes', () => {
                 },
             });
             quizzes.value = await response.json();
+        } catch (error) {
+            console.error('Error fetching quizzes:', error);
+        }
+    }
+
+    async function fetchSearchQuizzes(searchWord) {
+        const { refreshTokenIfNeeded } = useAuth();
+        const token = await refreshTokenIfNeeded();
+        try {
+            const response = await fetch(`${backendURL}/quizzes/search?searchWord=${searchWord}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            searchQuizzes.value = await response.json();
+            console.log(searchQuizzes.value.content)
         } catch (error) {
             console.error('Error fetching quizzes:', error);
         }
@@ -99,14 +118,16 @@ export const useQuizStore = defineStore('quizzes', () => {
     };
 
     return {
+        searchQuizzes,
         quizzes,
         quiz,
         games,
         fetchQuizzes,
+        fetchSearchQuizzes,
         fetchQuiz,
         createQuiz,
         updateQuiz,
         deleteQuiz,
-        fetchGamesForQuiz
+        fetchGamesForQuiz,
     };
 });

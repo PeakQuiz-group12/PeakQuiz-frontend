@@ -83,7 +83,7 @@ const registerUser = async () => {
       if (errorMsg.includes("already exists")) {
         registerErrUsername.value = errorMsg;
       }
-      else if (errorMsg.includes("already in use") || errorMsg.includes("email format")) {
+      else if (errorMsg.includes("is taken") || errorMsg.includes("email format")) {
         registerErrEmail.value = errorMsg
       }
       else if (errorMsg.includes("Password must")) {
